@@ -1,0 +1,112 @@
+@mixin word($size, $color, $weight:400) {
+    font-size: $size + px;
+    font-weight: $weight;
+    color: $color;
+}
+
+@mixin icon($size, $img) {
+    display: block;
+    width: $size + px;
+    height: $size + px;
+    background-image: url($img);
+    background-size: 100% 100%;
+}
+
+//$line:超出显示几行省略号
+//$substract:预留区域百分比
+@mixin text-overflow($line:1, $width:100%) {
+    overflow: hidden;
+
+    @if $line==1 {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: $width;
+    }
+
+    @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $line;
+        -webkit-box-orient: vertical;
+    }
+}
+
+@mixin flex() {
+    display: -webkit-flex;
+    display: flex;
+}
+
+
+/*弹性盒子居中（传入null不设置该属性）*/
+@mixin flex-center($direction:row, $justify:flex-start, $align:center, $flex:1, $flex-wrap: null) {
+    display: -webkit-flex;
+    display: flex;
+
+    @if ($direction !=null) {
+        flex-direction: $direction;
+    }
+
+    @if ($justify !=null) {
+        justify-content: $justify;
+    }
+
+    @if ($align !=null) {
+        align-items: $align;
+    }
+
+    @if ($flex !=null) {
+        flex: $flex;
+    }
+
+    @if ($flex-wrap !=null) {
+        flex-wrap: $flex-wrap;
+    }
+}
+
+@mixin border-1px($color:#DDDEE3, $poses:bottom) {
+    position: relative;
+
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+
+        @each $pos in $poses {
+            border-#{$pos}: 1px solid $color;
+            #{$pos}: 0;
+        }
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5),
+(min-device-pixel-ratio: 1.5) {
+    .border-1px &::after {
+        -webkit-transform: scaleY(0.7);
+        transform: scaleY(0.7);
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio:2),
+(min-device-pixel-ratio: 2) {
+    .border-1px &::after {
+        -webkit-transform: scaleY(0.5); //像素比为2的时候，我们设置缩放为0.5
+        transform: scaleY(0.5);
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio:3),
+(min-device-pixel-ratio: 3) {
+    .border-1px &::after {
+        -webkit-transform: scaleY(0.333333); //像素比为3的时候，我们设置缩放为0.33333
+        transform: scaleY(0.333333);
+    }
+}
+
+@mixin btn($height:44, $bgColor:#3E7093, $fontSize:15px, $color:#ffffff, $borderRadius:4px) {
+    width: 100%;
+    height: $height + px;
+    background: $bgColor;
+    font-size: $fontSize;
+    color: $color;
+    border-radius: $borderRadius
+}
