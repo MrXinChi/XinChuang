@@ -5,6 +5,8 @@ import CourseDetails2 from '@/views/student/about/child/courseDetails2'
 import CurriculumEvaluation from '@/views/student/about/child/curriculumEvaluation'
 import DirectSeedingRoom from '@/views/student/about/child/directSeedingRoom'
 import DetailsPageTeacher from '@/views/teacher/about/detailsPageTeacher'
+import TeacherList from '@/views/student/about/child/teacherList'
+import Evaluate from '@/views/student/about/child/evaluate'
 
 export const routes = [
 		{
@@ -36,6 +38,16 @@ export const routes = [
 			path: '/detailsPageTeacher',
 			name: "detailsPageTeacher",
 			component: DetailsPageTeacher
+		},
+		{
+			path: '/teacherList',
+			name: "teacherList",
+			component: TeacherList
+		},
+		{
+			path: '/evaluate',
+			name: "evaluate",
+			component: Evaluate
 		}
 ];
 

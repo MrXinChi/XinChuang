@@ -1,6 +1,8 @@
 <template>
   <div class="container_">
-    <header-nav title="意见反馈"></header-nav>
+    <header-nav title="意见反馈">
+      <div slot="right" class="header_right" @click="handleToOrderOfExchange">反馈列表</div>
+    </header-nav>
     <div class="textframe">
       <div class="textframe-title">您的宝贵意见，将是我们成功的基础，每句话都是 我们进步的最大动力</div>
       <div class="textframe-textarea">
@@ -31,6 +33,9 @@ export default {
     };
   },
   methods: {
+    handleToOrderOfExchange(){    //跳转反馈列表
+      this.$router.push('/feedbackList')
+    },
   	async setFeedback(text) {
       let Feedback = await this.service.personalCenter.setFeedback({
         user_id: localStorage.getItem("user_id"),

@@ -43,10 +43,7 @@ export default {
           title: "收货地址",
           isBorder: false
         },
-        {
-          title: "设备检测",
-          isBorder: true
-        }
+      
       ],
       dialogShow: false
     };
@@ -62,9 +59,6 @@ export default {
           break;
         case 2:
           this.$router.push("/deliveryAddress");
-          break;
-        case 3:
-          globalWebView("equipmentTesting");
           break;
       }
     },

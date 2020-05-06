@@ -37,6 +37,12 @@ import SecuritySettingStu from '@/views/student/personalCenter/securitySetting/s
 import ChangePasswordStu from '@/views/student/personalCenter/securitySetting/changePassword' // 修改密码
 import DeliveryAddressStu from '@/views/student/personalCenter/securitySetting/deliveryAddress' // 收货地址
 import ChangeAddressStu from '@/views/student/personalCenter/securitySetting/changeAddress' // 收货地址(添加,修改)
+import MyTeacher from '@/views/student/personalCenter/myTeacher/myTeacher' // 我的老师
+import TeacherDetails from '@/views/student/personalCenter/myTeacher/teacherDetails' // 我的老师详情
+import CoursesLearned from '@/views/student/personalCenter/myTeacher/coursesLearned' // 所学课程
+import JobManagement from '@/views/student/personalCenter/myTeacher/jobManagement/jobManagement' // 作业管理
+import OperationDetails from '@/views/student/personalCenter/myTeacher/jobManagement/operationDetails' // 作业详情
+import SubmitJob from '@/views/student/personalCenter/myTeacher/submitJob/submitJob' // 提交作业
 //latelyCurriculum 最近课程
 //myCurriculum 我的课程
 import LatelyCurriculum from '@/views/student/personalCenter/curriculum/latelyCurriculum' // 最近课程
@@ -225,6 +231,36 @@ export const routes = [
         path: '/changeAddress/:id',
         name: "changeAddress",
         component: ChangeAddressStu
+    },
+    {
+        path: '/myTeacher',
+        name: "myTeacher",
+        component: MyTeacher
+    },
+    {
+        path: '/teacherDetails',
+        name: "teacherDetails",
+        component: TeacherDetails
+    },
+    {
+        path: '/coursesLearned',
+        name: "coursesLearned",
+        component: CoursesLearned
+    },
+    {
+        path: '/jobManagement',
+        name: "jobManagement",
+        component: JobManagement
+    },
+    {
+        path: '/operationDetails',
+        name: "operationDetails",
+        component: OperationDetails
+    },
+    {
+        path: '/submitJob',
+        name: "submitJob",
+        component: SubmitJob
     },
     {
         path: '/myCurriculum',

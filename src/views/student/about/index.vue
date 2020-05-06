@@ -3,36 +3,54 @@
     <header-nav :returnShow="false" :returnShop="false" title="约课">
       <div @click="makeBtn" style="color: #23252F;" class="fs14" slot="right">我要约课</div>
     </header-nav>
-    <div class="kecheng">
-      <div class="kecheng-list" v-if="show">
-        <div
-          @click="couresBtn(i.status,i.id,i.image)"
-          class="kecheng-item"
-          v-for="(i,index) in couresArray"
-          :key="index"
-        >
-          <div class="kecheng_top flex flex_x_bten">
-            <div class="kecheng_top_l fs15 fw_b">{{i.music}}课</div>
-            <div class="kecheng_top_r fs15 fw_400">{{i.time}}</div>
-          </div>
-          <div class="kecheng_bottom flex flex_x_bten">
-            <div class="kecheng_bottom_l fs14">{{i.hour}}</div>
-            <div v-if="i.status == 1" class="kecheng_bottom_r fs14">约课成功</div>
-            <div v-else-if="i.status == 2" class="kecheng_bottom_r fs14">约课失败</div>
-            <div v-else-if="i.status == 3" class="kecheng_bottom_r fs14">正在为您安排老师</div>
-          </div>
-        </div>
+
+    <div class="xzkecheng" v-if="shop">
+      <ol>
+        <li v-for="(i,b) in OlLi" :key="b" @click="OlLiBtn(i.id)"><span>{{i.name}}</span></li>
+      </ol>
+    </div>
+    <div  v-else>
+      <div class="headerCss">
+        <van-tabs @change="onTopLable" v-model="active" v-if="aboutClass==1" swipeable>
+          <van-tab v-for="(i,index) in topLabelList1" :title="i.title" :key="index"> 
+          </van-tab>
+        </van-tabs>
+        <van-tabs @change="onTopLable" v-model="active" v-if="aboutClass==2" swipeable>
+          <van-tab v-for="(i,index) in topLabelList2" :title="i.title" :key="index"> 
+          </van-tab>
+        </van-tabs>
       </div>
-      <div v-else class="empty">
-        <div class="empty-img flex flex_x_center">
-          <img src="../../../assets/student/about/empty.png" />
+      <div class="kecheng">
+        <div class="kecheng-list" v-if="show">
+          <div
+            @click="couresBtn(i.status,i.id,i.image)"
+            class="kecheng-item"
+            v-for="(i,index) in couresArray"
+            :key="index"
+          >
+            <div class="kecheng_top flex flex_x_bten">
+              <div class="kecheng_top_l fs15 fw_b">{{i.music}}课</div>
+              <div class="kecheng_top_r fs15 fw_400">{{i.time}}</div>
+            </div>
+            <div class="kecheng_bottom flex flex_x_bten">
+              <div class="kecheng_bottom_l fs14">时长：{{i.hour}}</div>
+              <div class="kecheng_bottom_r fs14">详情</div>
+              
+            </div>
+          </div>
         </div>
-        <div class="empty-title fs13 flex flex_x_center">没有购买课程，先来预约免费体验课吧</div>
-        <div class="empty-btn flex flex_x_center">
-          <button @click="makeBtn" class="fs15 c_fff">我要预约</button>
+        <div class="empty" v-else>
+          <div class="empty-img flex flex_x_center">
+            <img src="../../../assets/student/about/empty.png" />
+          </div>
+          <div class="empty-title fs13 flex flex_x_center">没有购买课程，先来预约免费体验课吧</div>
+          <div class="empty-btn flex flex_x_center">
+            <button @click="makeBtn" class="fs15 c_fff">我要预约</button>
+          </div>
         </div>
       </div>
     </div>
+   
   </div>
 </template>
 
@@ -40,22 +58,83 @@
 export default {
   data() {
     return {
+      topLabelList1: [
+        {
+          index: 0,
+          title: "待审核"
+        },
+        {
+          index: 1,
+          title: "约课失败"
+        },
+        {
+          index: 2,
+          title: "预约成功"
+        },
+        {
+          index: 3,
+          title: "待选择老师"
+        },
+        {
+          index: 4,
+          title: "已经上完"
+        }
+      ],
+      topLabelList2:[
+          {
+          index: 0,
+          title: "上课时间"
+        },
+        {
+          index: 1,
+          title: "上课课程"
+        },
+        {
+          index: 2,
+          title: "已经上课"
+        },
+        {
+          index: 3,
+          title: "待上课"
+        },
+      ],
+      active: 0,
       couresArray: [],
       show: null,
-      status: "111"
+      status: "111",
+      OlLi:[
+        {name:"试听课",id:1},
+        {name:"我的老师",id:2}
+      ],
+      shop:true,
+      aboutClass:1,  //约课的状态
     };
   },
   methods: {
-    makeBtn() {
-      this.$router.push("/detailsPage");
+    onTopLable(index){   //筛选
+      // this.getCulum()
+    },
+    OlLiBtn(id) {
+      switch(id){
+        case 1:
+          this.aboutClass = 1
+          break;
+        case 2:
+          this.aboutClass = 2
+          break;
+      }
+      this.shop = false
+    },
+    makeBtn() {       //我要约课
+      this.$router.push({path:"/detailsPage",query:{aboutClass:this.aboutClass}});
     },
     //我的课程列表
     async getCulum() {
+      this.couresList=[]
       let Culum = await this.service.about.getCulum({
         user_id: localStorage.getItem("user_id"),
         token: localStorage.getItem("token")
       });
-      console.log("我的课程列表", Culum.data);
       this.couresArray = Culum.data;
       if (this.couresArray.length == 0) {
         this.show = false;
@@ -65,17 +144,42 @@ export default {
     },
     detailsClick() {},
     couresBtn(status, id, img) {
-      this.$router.push(`/courseDetails/${id}`);
+      this.$router.push(`/courseDetails/${id}/${status}`);
     }
   },
   created() {
-    console.log(this.$route);
     this.getCulum();
   }
 };
 </script>
 
 <style scoped="scoped" lang="scss">
+.headerCss{
+    position:fixed;
+    width:100%;
+    z-index: 98;
+    /deep/ .van-ellipsis{
+    flex-basis: 20% !important;
+    }
+}
+.xzkecheng{
+  margin: 100px auto;
+  ol{
+    width:100%;
+    display: flex;
+    li{
+      background: #fff;
+      margin:2%;
+      width:46%;
+      line-height: 185px;
+      text-align: center;
+      span{
+        font-size: 15px;
+        font-weight: bold;
+      }
+    }
+  }
+}
 .kecheng-list {
   padding-bottom: 60px;
   .kecheng-item {
@@ -140,7 +244,7 @@ export default {
     width: 100%;
     background: #fafafa;
     box-sizing: border-box;
-    padding-top: 15px;
+    padding-top: 60px;
     box-sizing: border-box;
   }
 }

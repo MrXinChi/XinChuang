@@ -42,7 +42,7 @@
 				mine_icon: {
 					normal: require('@/assets/student/tabber/main.png'),
 					active: require('@/assets/student/tabber/main.png')
-				}
+				},
 			}
 		},
 		 watch: {
@@ -52,7 +52,10 @@
                 // 缓存到本地
                 sessionStorage.setItem('tabBarActiveIndex', value);
             }
-        }
+		},
+		created(){
+			this.active  = this.$route.query.active
+		}
 	}
 </script>
 

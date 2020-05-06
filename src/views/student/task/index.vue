@@ -3,7 +3,14 @@
 		<header-nav :returnShow='false' :returnShop="false" title="作业">
 			<div @click="makeBtn" style="color: #23252F;" class="fs14" slot="right">提交作业</div>
 		</header-nav>
+ 		<van-tabs @click="onClick">
+			<van-tab title="课程列表">
 
+			</van-tab>
+			<van-tab title="提交作业">
+				
+			</van-tab>
+		</van-tabs>
 		<div class="kecheng">
 			<div class="kecheng-list" v-if="taskShow">
 				<div @click="couresBtn(i.status,i.id,index)" class="kecheng-item" v-for="(i,index) in couresArray" :key="index">
@@ -38,6 +45,9 @@
 			}
 		},
 		methods: {
+			onClick(name, title) {
+				console.log(name)
+			},
 			async getEndculum() {
 				let Endculum = await this.service.task.getEndculum({
 					user_id: localStorage.getItem("user_id"),

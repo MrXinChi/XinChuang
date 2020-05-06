@@ -2,7 +2,7 @@
 	<div>
 		<header-nav border :returnShop="false" title="预约课程"></header-nav>
 		<div class="content">
-			<div class="detail">
+			<div class="detail" v-if="aboutClass==1">
 				<div class="age-name fs16 fw_b">请选择孩子年龄</div>
 				<div class="age-list flex flex_x_bten flex_warp">
 					<!--:disabled="i.disabled == 1?false:true"-->
@@ -45,6 +45,24 @@
 			<button :disabled="disabled" @click="makeBtn">预约</button>
 		</div>
 		<elastic-frame ref="refs" @returnBtn="returnBtn" :title1="title1" :title2="title2" :title3="title3" :imgs='imgs' :btn="btn"></elastic-frame>
+		<van-popup v-model="van_dialog">
+			<div class="van-dialogs">
+				<div class="van-dialog__header">提示</div>
+				<div class="van-dialog__content">
+					<div class="van-dialog__message van-dialog__message--has-title">
+						购买成功后，不可退款！
+					</div>
+				</div>
+				<div class="van-hairline--top van-dialog__footer van-dialog__footer--buttons">
+					<button class="van-button van-button--default van-button--large van-dialog__cancel" @click="qxbackSubmit">
+						<span class="van-button__text" >取消</span>
+					</button>
+					<button class="van-button van-button--default van-button--large van-dialog__confirm van-hairline--left" @click="qdbackSubmit">
+						<span class="van-button__text" >确认</span>
+					</button>
+				</div>
+			</div>
+		</van-popup>
 	</div>
 </template>
 
@@ -59,6 +77,7 @@
 		},
 		data() {
 			return {
+				van_dialog:false,//预约前的提示
 				ageArray: [], //孩子年龄
 				musicArray: [], //乐器
 				hourArray: [], //课时
@@ -85,27 +104,31 @@
 				imgs:null,
 				timeindex:1,
 				shijianArray:[],
-				shijianShow:false
+				shijianShow:false,
+				aboutClass:""  //约课状态
 			}
 		},
 		methods: {
+			qxbackSubmit(){		//预约的提示状态  取消
+				this.van_dialog = false
+			},
+			qdbackSubmit(){		//预约的提示状态  确定
+				this.van_dialog = false
+				this.getBoutadd()
+
+			},
 			async getBout() {
 				let Bout = await this.service.about.getBout({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token')
 				})
-				console.log('孩子年龄', Bout.data.age)
 				this.ageArray = Bout.data.age
-				console.log('乐器', Bout.data.music)
 				this.musicArray = Bout.data.music
-				console.log('课时', Bout.data.hour)
 				this.hourArray = Bout.data.hour
-				console.log('上课时间', Bout.data.time)
 				this.timeArray = Bout.data.time
 			},
 			async getImgsubm(params) {
 				let Imgsubm = await this.service.about.getImgsubm(params)
-				console.log('图片上传', Imgsubm.data)
 				this.file = Imgsubm.data
 			},
 			async getBoutadd() {
@@ -118,16 +141,20 @@
 					file:this.file,
 					hour:this.time
 				})
-				console.log('孩子年龄', Boutadd)
-				console.log(Boutadd.state)
 				this.boutaddState = Boutadd.state
-				if(Boutadd.state=200){
+				if(Boutadd.state==200){
 					this.title1 = '恭喜您！'
 					this.title2 = '购买成功'
 					this.title3 = '请开课三分钟前进入教室'
 					this.btn = '返回首页'
 					this.imgs = cg
 					this.$refs.refs.show = true
+					this.age="";
+					this.music="",
+					this.hour="";
+					this.shijian="";
+					this.file="";
+					this.time="";
 				}else{
 					this.title1 = '很抱歉'
 					this.title2 = '您的剩余时长不足'
@@ -137,10 +164,7 @@
 					this.$refs.refs.show = true
 				}
 			},
-			
-			
-			
-			
+
 			afterRead(file) {
 				let files  = this.fileList[0].file
 				let param = new FormData()
@@ -152,22 +176,18 @@
 			ageBtn(index) {
 				this.ageNum = index
 				this.age = this.ageArray[index].name
-				console.log(this.age)
 				this.fn()
 			},
 			styleBtn(index) {
 				this.styleNum = index
 				this.music = this.musicArray[index].name
-				console.log(this.music)
 				this.fn()
 			},
 			dataBtn(index) {
 				this.dataNum = index
 				this.hour = this.timeArray[index].name
 				this.hour = this.hour.split('(')[0]
-				console.log(this.hour)
 				this.fn()
-				console.log(index)
 				this.shijianArray = this.timeArray[index].text
 				if(this.shijianArray.length == 0){
 				this.shijianShow = false
@@ -178,23 +198,21 @@
 			timeBtn(index) {
 				this.timeNum = index
 				this.time = this.hourArray[index].name
-				console.log(this.time)
 				this.fn()
 			},
 			shijianBtn(index){
 				this.shijianNum = index
 				this.shijian = this.shijianArray[index].name
-				console.log(this.shijian)
 				this.fn()
 			},
-			makeBtn() {
+			makeBtn() {  //预约
 				if(this.fileList == '') {
 					toast({
 						text: '请上传图片',
 						time: 1000
 					})
 				} else {
-					this.getBoutadd()
+					this.van_dialog = true
 				}
 			},
 			fn() {
@@ -203,11 +221,9 @@
 				}
 			},
 
-			returnBtn() {
-
+			returnBtn() {   //返回首页
 				console.log(this.boutaddState)
-				if(this.boutaddState == 200){
-					console.log('111')
+				if(this.boutaddState == '200'){
 					sessionStorage.setItem('tabBarActiveIndex', 0);
 					this.$router.push('/dashboard/homestu')
 				}else{
@@ -226,17 +242,32 @@
 		},
 		created() {
 			this.getBout()
-			console.log(this.shijianArray)
 			if(this.shijianArray.length == 0){
 				this.shijianShow = false
 			}else{
 				this.shijianShow = true
 			}
+			this.aboutClass = this.$route.query.aboutClass
 		}
 	}
 </script>
 
 <style scoped="scoped" lang="scss">
+		.van-dialogs{width:320px;overflow:hidden;font-size:16px;background-color:#fff;border-radius:16px;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transition:.3s;transition:.3s;-webkit-transition-property:opacity,-webkit-transform;transition-property:transform,opacity;transition-property:transform,opacity,-webkit-transform}@media (max-width:321px){
+        	.van-dialog{width:90%}}
+        .van-dialog__header{padding-top:24px;font-weight:500;line-height:24px;text-align:center}
+        .van-dialog__header--isolated{padding:24px 0}
+        .van-dialog__message{max-height:60vh;padding:24px;overflow-y:auto;font-size:14px;line-height:20px;white-space:pre-wrap;text-align:center;word-wrap:break-word;-webkit-overflow-scrolling:touch}
+        .van-dialog__message--has-title{padding-top:12px;color:#646566}
+        .van-dialog__message--left{text-align:left}
+        .van-dialog__message--right{text-align:right}
+        .van-dialog__footer{overflow:hidden;-webkit-user-select:none;user-select:none}
+        .van-dialog__footer--buttons{display:-webkit-box;display:-webkit-flex;display:flex}
+        .van-dialog__footer--buttons .van-button{-webkit-box-flex:1;-webkit-flex:1;flex:1}
+        .van-dialog .van-button{border:0}
+        .van-dialog__confirm,.van-dialog__confirm:active{color:#1989fa}
+        .van-dialog-bounce-enter{-webkit-transform:translate3d(-50%,-50%,0) scale(.7);transform:translate3d(-50%,-50%,0) scale(.7);opacity:0}
+        .van-dialog-bounce-leave-active{-webkit-transform:translate3d(-50%,-50%,0) scale(.9);transform:translate3d(-50%,-50%,0) scale(.9);opacity:0}
 	.content {
 		padding-bottom: 80px;
 	}

@@ -47,6 +47,11 @@ export default {
         },
       navList: [
         {
+          img: require("@/assets/student/personalCenter/icon_list_9.png"),
+          title: "设备检测",
+          isBorder: false
+        },
+        {
           img: require("@/assets/student/personalCenter/icon_list_2.png"),
           title: "星星商城",
           isBorder: false
@@ -58,7 +63,22 @@ export default {
         },
         {
           img: require("@/assets/student/personalCenter/icon_list_4.png"),
+          title: "我的老师",
+          isBorder: false
+        },
+        {
+          img: require("@/assets/student/personalCenter/icon_list_4.png"),
           title: "我的课程",
+          isBorder: false
+        },
+        {
+          img: require("@/assets/student/personalCenter/icon_list_4.png"),
+          title: "绑定老师",
+          isBorder: false
+        },
+         {
+          img: require("@/assets/student/personalCenter/icon_list_4.png"),
+          title: "我要约课",
           isBorder: false
         },
         {
@@ -109,29 +129,44 @@ export default {
       this.$router.push("/personalCenterInfo");
     },
     toDetails(inx) {
+      console.log(inx)
       switch (inx) {
         case 0:
-          this.$router.push("/shopIndex");
+          globalWebView("equipmentTesting");
           break;
         case 1:
-          this.$router.push("/shareIndexxs");
+          this.$router.push("/shopIndex");
           break;
         case 2:
-        this.$router.push("/myCurriculum");
+          this.$router.push("/shareIndexxs");
           break;
         case 3:
-        this.$router.push("/latelyCurriculum");
-        
+          this.$router.push("/myTeacher");
           break;
         case 4:
-          this.$router.push("/helpCenter");
+          this.$router.push("/myCurriculum");
+          // this.$router.push("/latelyCurriculum");
           break;
         case 5:
-          this.$router.push("/feedbackxs");
+          console.log("绑定老师")
+          // this.$router.push("/helpCenter");
           break;
         case 6:
-          this.$router.push("/securitySettingstu");
+					this.$router.push('/detailsPage')
           break;
+        case 7:
+          console.log("最近课程")
+          // this.$router.push("/securitySettingstu");
+          break;
+        case 8:
+          this.$router.push("/helpCenter");
+          break;
+        case 9:
+          this.$router.push("/feedbackxs");
+          break;
+        case 10:
+          this.$router.push("/securitySettingstu");
+          break;  
         case "classHour":
           this.$router.push("/myClassHourstu");
           break;
