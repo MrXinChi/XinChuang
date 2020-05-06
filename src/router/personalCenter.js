@@ -6,6 +6,9 @@ import ShareIndex from '@/views/teacher/personalCenter/share/shareIndex' // 分�
 import ShareDetail from '@/views/teacher/personalCenter/share/shareDetail' // 分享详情页
 import HelpCenter from '@/views/teacher/personalCenter/helpCenter/helpCenter' // 帮助中心
 import HelpCenterDetail from '@/views/teacher/personalCenter/helpCenter/helpCenterDetail' // 帮助中心详情
+import MyStudent from '@/views/teacher/personalCenter/myStudent/myStudent' // 我的学生
+import MyStudentDetail from '@/views/teacher/personalCenter/myStudent/myStudentDetail' // 我的学生详情
+import SchoolTime from '@/views/teacher/personalCenter/schoolTime/index' // 上课时间
 import Feedback from '@/views/teacher/personalCenter/feedback/feedback' // 意见反馈
 import SecuritySetting from '@/views/teacher/personalCenter/securitySetting/securitySetting' // 安全设置
 import ChangePassword from '@/views/teacher/personalCenter/securitySetting/changePassword' // 修改密码
@@ -76,6 +79,26 @@ export const routes = [
         name: "helpCenterDetail",
         component: HelpCenterDetail
     },
+    //我的学生-start
+    {
+        path: '/myStudent',
+        name: "myStudent",
+        component: MyStudent
+    },
+    {
+        path: '/myStudentDetail/:id',
+        name: "myStudentDetail",
+        component: MyStudentDetail
+    },
+    //我的学生-end
+
+    //上课时间-start
+    {
+        path: '/schoolTime',
+        name: "schoolTime",
+        component: SchoolTime
+    },
+    //上课时间-end
     {
         path: '/feedback',
         name: "feedback",

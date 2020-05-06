@@ -2,6 +2,7 @@ import Vue from "vue";
 //teacher
 import Home from '@/views/teacher/home/index';
 import About from '@/views/teacher/about/index';
+import Classroom from '@/views/teacher/classroom/index';
 import PersonalCenter from '@/views/teacher/personalCenter/index';
 import Task from '@/views/teacher/task/index' ;
 
@@ -30,6 +31,11 @@ export const routes = [
 		path: 'about',
 		name: "about",
 		component: About,
+	},
+	{
+		path: 'classroom',
+		name: "classroom",
+		component: Classroom,
 	},
 	{
 		path: 'personalCenter',

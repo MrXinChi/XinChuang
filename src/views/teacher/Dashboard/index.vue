@@ -10,6 +10,12 @@
 				<span>抢单大厅</span>
 				<img slot="icon" slot-scope="props" :src="props.active ? shop_icon.active : shop_icon.normal">
 			</van-tabbar-item>
+<van-tabbar-item replace to="/dashboard/classroom">
+	<span>进入课堂</span>
+	<img slot="icon" slot-scope="props" :src="props.active ? shop_icon.active : shop_icon.normal">
+</van-tabbar-item>
+
+			
 			<van-tabbar-item replace to="/dashboard/personalCenter">
 				<span>我的</span>
 				<img slot="icon" slot-scope="props" :src="props.active ? mine_icon.active : mine_icon.normal">

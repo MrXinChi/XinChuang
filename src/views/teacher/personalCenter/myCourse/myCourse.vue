@@ -2,12 +2,18 @@
   <div class="container">
     <header-nav title="课程列表"></header-nav>
     <course-list color="#F29417" ref="courseList" @courseBtn="courseBtn" details="进入课堂"></course-list>
+    <!-- <course-lists color="#F29417" ref="courseList" @courseBtn="courseBtn" details="进入课堂"></course-lists> -->
   </div>
 </template>
 
 <script>
 import courseList from "@/components/courseList";
+import courseLists from "@/components/courseLists";
 export default {
+  components: {
+			courseList,
+			courseLists
+  },
   data() {
     return {};
   },

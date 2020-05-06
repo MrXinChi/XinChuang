@@ -70,6 +70,16 @@ export default {
           isBorder: false
         },
         {
+          img: require("@/assets/personalCenter/icon_list_9.png"),
+          title: "上课时间",
+          isBorder: false
+        },
+        {
+          img: require("@/assets/personalCenter/icon_list_10.png"),
+          title: "我的学生",
+          isBorder: false
+        },
+        {
           img: require("@/assets/personalCenter/icon_list_6.png"),
           title: "帮助中心",
           isBorder: false
@@ -115,9 +125,15 @@ export default {
           this.$router.push("/finance");
           break;
         case 5:
-          this.$router.push("/helpCenter");
+          this.$router.push("/schoolTime");
           break;
         case 6:
+          this.$router.push("/myStudent");
+          break;
+        case 7:
+          this.$router.push("/helpCenter");
+          break;
+        case 8:
           this.$router.push("/securitySetting");
           break;
         case "classHour":

@@ -48,3 +48,6 @@ Vue.use(Rate);
 //
 import { Loading } from 'vant';
 Vue.use(Loading);
+//输入框
+import { Field } from 'vant';
+Vue.use(Field);

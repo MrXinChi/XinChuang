@@ -4,6 +4,7 @@ import CourseDetails from '@/views/student/about/child/courseDetails'
 import CourseDetails2 from '@/views/student/about/child/courseDetails2'
 import CurriculumEvaluation from '@/views/student/about/child/curriculumEvaluation'
 import DirectSeedingRoom from '@/views/student/about/child/directSeedingRoom'
+import DetailsPageTeacher from '@/views/teacher/about/detailsPageTeacher'
 
 export const routes = [
 		{
@@ -30,6 +31,11 @@ export const routes = [
 			path: '/directSeedingRoom',
 			name: "directSeedingRoom",
 			component: DirectSeedingRoom
+		},
+		{
+			path: '/detailsPageTeacher',
+			name: "detailsPageTeacher",
+			component: DetailsPageTeacher
 		}
 ];
 
