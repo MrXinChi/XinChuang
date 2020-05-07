@@ -145,11 +145,9 @@ export default {
           break;
         case 4:
           this.$router.push("/myCurriculum");
-          // this.$router.push("/latelyCurriculum");
           break;
         case 5:
-          console.log("绑定老师")
-          // this.$router.push("/helpCenter");
+          this.$router.push("/bindTeacher");
           break;
         case 6:
 					this.$router.push('/detailsPage')

@@ -43,6 +43,10 @@ import CoursesLearned from '@/views/student/personalCenter/myTeacher/coursesLear
 import JobManagement from '@/views/student/personalCenter/myTeacher/jobManagement/jobManagement' // 作业管理
 import OperationDetails from '@/views/student/personalCenter/myTeacher/jobManagement/operationDetails' // 作业详情
 import SubmitJob from '@/views/student/personalCenter/myTeacher/submitJob/submitJob' // 提交作业
+import BindTeacher from '@/views/student/personalCenter/bindTeacher/bindTeacher' // 老师列表
+import SelectTeachers from '@/views/student/personalCenter/bindTeacher/selectTeachers' // 筛选老师
+import BindTeacherDetails from '@/views/student/personalCenter/bindTeacher/bindTeacherDetails' // 老师详情
+
 //latelyCurriculum 最近课程
 //myCurriculum 我的课程
 import LatelyCurriculum from '@/views/student/personalCenter/curriculum/latelyCurriculum' // 最近课程
@@ -261,6 +265,21 @@ export const routes = [
         path: '/submitJob',
         name: "submitJob",
         component: SubmitJob
+    },
+    {
+        path: '/bindTeacher',
+        name: "bindTeacher",
+        component: BindTeacher
+    },
+    {
+        path: '/selectTeachers',
+        name: "selectTeachers",
+        component: SelectTeachers
+    },
+    {
+        path: '/bindTeacherDetails',
+        name: "bindTeacherDetails",
+        component: BindTeacherDetails
     },
     {
         path: '/myCurriculum',
