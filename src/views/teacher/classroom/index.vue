@@ -3,43 +3,45 @@
 		<header-nav :returnShow='false' :returnShop="false" title="进入课程"></header-nav>
 		<div class="header_title">
 			待上课列表
-			
 			<div class="dropdown">
 				<img src="@/assets/personalCenter/icon-search.png" class="dropbtn" @click="menuItem=true">
 				<div class="dropdown-content" v-if="menuItem">
-					<a href="#" @click="menuItem=false">待上课</a>
-					<a href="#" @click="menuItem=false">已完成</a>
+					
+					<a href="#" v-for="(i,b) in aArray" :key="b" @click="aBTN(i.id)">{{i.name}}</a>
 				</div>
 			</div>
-
-
 		</div>
-		<div class="kecheng" v-for="index in 5" :key="index">
+		 <div class="kecheng"  v-for="(i,b) in CourseListArray" :key="b">
 			<div class="share_wrapper">
-				<div class="share_title">   
-					<img src="@/assets/student/tabber/about.png" class="avatar" />
-					<div class="username">昵称<span>女</span></div>
-				</div> 
-				<div class="share_list">
-					<div class="share_item">
-						<div class="item_left">钢琴课<p>50分钟</p></div>
-						<div class="item_right">2019-09-09<p class="status">待上课</p></div>
-					</div>
-					<div class="share_item">
-						<div class="item_left">授课时间</div>
-						<div class="item_right">2019-09-09(周四上午)</div>
-					</div>
-					<div class="share_item">
-						<div class="item_left">提示</div>
-						<div class="item_right">上课时间为：2020-02-02 19:00<p>请您在上课时间提前五分钟进入课堂</p></div>
-					</div>
+			<div class="share_title">   
+				<img :src="i.images" class="avatar" />
+				<div>
+				<div class="username">{{i.uName}}</div>
 				</div>
-				<div class="submit">
-					<van-button type="info">进入课堂</van-button>
+			</div> 
+			<div class="share_list">
+				<div class="share_item">
+				<div class="item_left">{{i.music}}<p>{{i.hour}}分钟</p></div>
+				<div class="item_right">{{i.time}}
+					<p v-if="i.status==1" class="status">待上课</p>
+					<p v-if="i.status==2" class="status">已完成</p>
 				</div>
-			
+				</div>
+				<div class="share_item">
+				<div class="item_left">授课时间</div>
+				<div class="item_right">{{i.time_two}}</div>
+				</div>
+				<div class="share_item">
+				<div class="item_left">提示</div>
+				<div class="item_right">上课时间为：{{i.time}}<p>请您在上课时间提前五分钟进入课堂</p></div>
+				</div>
 			</div>
-		</div>
+			<div class="submit" @click="enterClassroomBtn(i.images,i.id)">
+				<van-button type="info">进入课堂</van-button>
+			</div>
+        
+        </div>
+      </div>
 	</div>
 </template>
 
@@ -49,22 +51,41 @@ import toast from "@/utils/toast";
 	export default {
 		data(){
 			return{
+				aArray:[
+					{name:"待上课",id:1},
+					{name:"已完成",id:2}
+				],
 				CourseListArray:[],
-				menuItem:false
+				menuItem:false,
+				type:3,
+				type_two:1
 			}
 		},
 		methods:{
-			makeBtn(){
-				
+			aBTN(id){
+				type_two = id
+			},
+			enterClassroomBtn(img, id) {  //进入课堂
+				globalWebView(
+					"initRoom",
+					VJsonStringify({
+					...getPersonalData(),
+					id: id,
+					image: img
+					})
+				);
 			},
 			//抢单大厅
-			async getCourseList() {
-				let CourseList = await this.service.personalCenter.getCourseList({
+			async myTask(){
+				let init = await this.service.personalCenter.getMyCourseList({
 					user_id: localStorage.getItem("user_id"),
-					token: localStorage.getItem("token")
-				});
-				console.log("抢单大厅", CourseList.data);
-				this.CourseListArray = CourseList.data
+					token: localStorage.getItem("token"),
+					type:this.type,
+					type_two:this.type_two
+				})
+				if(init.state==200){
+					this.CourseListArray = init.data
+				}
 			},
 			//抢单
 			async setMyCourse(id) {
@@ -73,8 +94,7 @@ import toast from "@/utils/toast";
 					token: localStorage.getItem("token"),
 					bout_id:id
 				});
-				console.log("抢单", MyCourse);
-				console.log(MyCourse.state)
+				
 				if(MyCourse.state == 200){
 					toast({
 						text: '抢单成功',
@@ -87,15 +107,9 @@ import toast from "@/utils/toast";
 					});
 				}
 			},
-			kechengBtn(id){
-				console.log(id)
-				this.setMyCourse(id)
-				this.getCourseList()
-				console.log(this.CourseListArray)
-			}
 		},
 		created(){
-			this.getCourseList()
+			this.myTask()
 		}
 	}
 

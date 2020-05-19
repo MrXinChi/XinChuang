@@ -1,13 +1,20 @@
 <template>
 	<div class="container">
 		<header-nav border title="老师评价"></header-nav>
-		<div class="course flex flex_y_center" >
+		<div class="course " >
            <div class="course_left">
-               <img src="../../../../assets/about/empty.png" alt="">
+               <img :src="culinfoArray.mages" alt="">
            </div>
            <div class="course_right">
-               <p>张涵予  男  大提琴课老师</p>
-               <p>讲课风格：风趣幽默，生动形象好评89%</p>
+               <p>{{culinfoArray.name}}    {{culinfoArray.music}}</p>
+           </div>
+           <div class="course_bottom">
+               <ul>
+                   <li v-for="(i,b) in culinfoArray.evaluate" :key="b" class="flex flex_y_center flex_x_bten">
+                       <div>{{i.text}}</div>
+                       <div>{{i.addtime}}</div>
+                    </li>
+               </ul>
            </div>
 		</div>	
         <button class="buttons" @click="determineBtn">
@@ -18,7 +25,7 @@
 				<div class="van-dialog__header">提示</div>
 				<div class="van-dialog__content">
 					<div class="van-dialog__message van-dialog__message--has-title">
-						
+                        {{msg}}
 					</div>
 				</div>
 				<div class="van-hairline--top van-dialog__footer van-dialog__footer--buttons">
@@ -40,33 +47,53 @@
 			return {
 				culinfoArray: [],
                 status:"",
-                van_dialog:false
+                van_dialog:false,
+                tac_id:0,
+                bout_id:0,
+                msg:""
 			}
 		},
 		methods: {
-            determineBtn(){  //确定
-                this.van_dialog = true
+            determineBtn(){  //发起指定
+                this.appoint_tacBtn()
             },
-            qxbackSubmit(){
+            qxbackSubmit(){  //取消指定
                 this.van_dialog = false
             },
-            qdbackSubmit(){
+            qdbackSubmit(){  //确认指定
                 this.van_dialog = false
+                this.$router.push('/dashboard/aboutstu')
             },
 			async getCulinfo(id) {
-				let Culinfo = await this.service.about.getCulinfo({
+				let Culinfo = await this.service.about.evaluate({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
-					bout_id: id
-				})
-				this.culinfoArray = Culinfo.data
-			},
+					tac_id: this.tac_id
+                })
+                if(Culinfo.state == 200){
+                    this.culinfoArray = Culinfo.data
+                }
+            },
+            async appoint_tacBtn(id) {  
+				let init = await this.service.about.appoint_tac({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+                    tac_id: this.tac_id,
+                    bout_id:this.bout_id
+                })
+                if(init.state == 200){
+                    this.van_dialog = true
+                    this.msg = init.msg
+                }else if(init.state==-1){
+                    this.van_dialog = true
+                    this.msg = init.msg
+                }
+            },
 		},
 		created() {
-			var id = this.$route.params.id
-			this.status = this.$route.params.status
-			console.log(this.status)
-			// this.getCulinfo(id)
+            this.tac_id = this.$route.query.tac_id
+            this.bout_id = this.$route.query.bout_id
+			this.getCulinfo()
 		}
 	}
 </script>
@@ -97,20 +124,26 @@
         margin: 10px 0;
         padding: 5px;
 		.course_left{
-             width:30%;
+            width: 100%;
              img{
-                width:100%;
+                width:100px;
                 border-radius: 50%;
+                margin: 0 auto;
              }   
         }
 		.course_right{
-            width:70%;
+            font-size:14px;
+            font-weight: 600;
+            padding: 0 15px;
+            line-height:30px;
+            text-align: center;
+        }
+        .course_bottom{
             font-size:14px;
             font-weight: 600;
             padding: 0 15px;
             line-height:30px;
         }
-		
     }	
     .buttons{
         width:70%;

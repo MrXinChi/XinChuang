@@ -10,20 +10,28 @@
 			</div>
 			<div class="subtask-choice2 fs16 fw_b">上传作业</div>
 			<!--视频上传-->
+			<ol class="flex ol_li">
+				<li  v-for="(i,b) in fileArray" :key="b" @click="fileArrayBtn(i.id)" :class="[fileArrayNum==i.id?'fileClass':'']">
+					{{i.name}}
+				</li>
+			</ol>
 			<div class="item_bock flex">
 				<label v-if="videoShow">
-				<div class="jia flex_center">
-					<img src="@/assets/task/jia.png" alt="" />
-				</div>
-		   		<input type="file" accept="video/*" @input="input" @change="handleFile" class="hiddenInput" />
-		    	
-	    	</label>
+					<div class="jia flex_center">
+						<img src="@/assets/task/jia.png" alt="" />
+					</div>
+					<input v-if="audioShow" type="file" accept="video/*" @input="input" @change="handleFile1" class="hiddenInput" />
+		    		<input v-else type="file" accept="audio/*" @input="input" @change="handleFile2" class="hiddenInput" />
+				</label>
 				<div class="video" v-else>
 					<video id="videos" accept="video/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar">
 						<source :src="userInfo.avatar" type="video/mp4" />
 					</video>
+					<audio id="audios" accept="audio/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar1">
+						<source :src="userInfo.avatar1" type="audio/mp4" />
+					</audio>
 					<div @click="loopBtn" class="loop">
-						<img v-if="loopimg" src="@/assets/student/task/loop.png" />
+						<img v-if="loopimg != true" src="@/assets/student/task/loop1.png" />
 					</div>
 					<van-loading v-if="loadings" vertical>加载中...</van-loading>
 					<div v-if="jisuanShow" class="loading_time fs15">{{reversedMessage}}</div>
@@ -44,7 +52,7 @@
 				</div>
 			</div>
 		</transition>
-		<div v-if="choiceShow" class="choice">
+		<!-- <div v-if="choiceShow" class="choice">
 			<div class="flex choice_header">
 				<div class="flex_1 hoice_header_left  flex flex_y_center">
 					<img @click="returnShow" src="@/assets/student/components/return.png" />
@@ -58,8 +66,8 @@
 					<div class="item-left fs15">{{i.music}}</div>
 				</div>
 			</div>
-		</div>
-		<frame2 :frameShow="frameShow" :title1="title1" :color="color" ref="refs"></frame2>
+		</div> -->
+		<frame2 :frameShow="frameShow" @returnBtn1="returnBtn1" :title1="title1" :color="color" ref="refs"></frame2>
 	</div>
 </template>
 
@@ -74,9 +82,13 @@
 		},
 		data() {
 			return {
+				fileArray:[{name:"上传视频",id:1},{name:"上传音频",id:2}],
 				userInfo: {
 					avatar: '',
+					avatar1:''
 				},
+				fileArrayNum:1,
+				audioShow:true,
 				videoShow: true,
 				Whether: true,
 				width: '150px',
@@ -100,7 +112,8 @@
 				timeDuration:'',
 				timemane: '',
 				jisuanShow:false,
-				EndculumArray:[]
+				EndculumArray:[],
+				typeID:1  //提交，区分图片 音频或视频
 			}
 		},
 		computed: {
@@ -110,36 +123,55 @@
 			}
 		},
 		methods: {
-			async getEndculum() {
-				let Endculum = await this.service.task.getEndculum({
-					user_id: localStorage.getItem("user_id"),
-					token: localStorage.getItem("token")
-				});
-//				console.log("作业列表", Endculum.data);
-				this.EndculumArray = Endculum.data
-				let index = this.$route.params.index
-				console.log(this.EndculumArray[index])
-				this.values = this.EndculumArray[index].music
-				this.valuesid = this.EndculumArray[index].id
+			returnBtn1(){  //提交作业成功后
+				this.$refs.refs.show = false
+				this.values = ""
+				this.userInfo.avatar=""
+				this.userInfo.avatar1=""
+				this.jisuanShow = false
+				this.videoShow = true
 			},
-			async getSubculum() {
-				let Subculum = await this.service.task.getSubculum({
-					user_id: localStorage.getItem("user_id"),
-					token: localStorage.getItem("token")
-				});
-				console.log("选择课程", Subculum.data);
-				this.choiceArray = Subculum.data
+			removeImage(){	//删除图片
+				this.userInfo.img=""
+				this.videoShow = true
 			},
-			async getVidsubm(params) {
-				let Vidsubm = await this.service.about.getImgsubm(params)
-				console.log('图片上传', Vidsubm)
-				this.shipin = Vidsubm.data
-
+			fileArrayBtn(id){ 	//选择上传视频或者音频
+				this.fileArrayNum = id
+				this.typeID = id
+				this.userInfo.avatar = ''
+				this.userInfo.avatar1 = ''
+				this.jisuanShow = false
+				this.videoShow = true
+				switch(id){
+					case 1:
+						this.audioShow = true
+						break;
+					case 2:
+						this.audioShow = false
+						break;
+				}
+			},
+			// async getEndculum() {  //提交的列表
+			// 	let Endculum = await this.service.task.getEndculum({
+			// 		user_id: localStorage.getItem("user_id"),
+			// 		token: localStorage.getItem("token")
+			// 	});
+			// 	this.EndculumArray = Endculum.data
+			// 	let index = this.$route.params.index
+			// 	this.values = this.EndculumArray[index].music
+			// 	this.valuesid = this.EndculumArray[index].id
+			// },
+			
+			
+			//提交视频  到 后台
+			async getVidsubm1(params) {
+				let Vidsubm = await this.service.about.video(params)
+				this.shipin = Vidsubm.tup
 				const that = this
 				that.timer = setInterval(function() {
-					console.log(document.readyState)
 					if(document.readyState === 'complete') {
 						that.loadings = false
+						that.loopimg = false
 						toast({
 							text: '上传成功',
 							time: 1000
@@ -148,36 +180,58 @@
 					}
 				}, 1000)
 				var videos = document.getElementById('videos')
-				
 				var split_vd = videos.duration
 				var split_vd_str = split_vd.toString();
   				var split_vd_num = parseInt(split_vd_str.substring(0,split_vd_str.indexOf('.')));
-				
 				var fenzhong = Math.ceil(split_vd_num/60)
-				
 				this.timeDuration = fenzhong
-				
 				this.timemane = fenzhong * 10
 				this.jisuanShow = true
-//				console.log(this.timeDuration)
+				
 			},
-			async getTask() {
+			//提交音频  到 后台
+			async getVidsubm2(params) {
+				let Vidsubm = await this.service.about.audio(params)
+				this.shipin = Vidsubm.tup
+				const that = this
+				that.timer = setInterval(function() {
+					if(document.readyState === 'complete') {
+						that.loadings = false
+						that.loopimg = false
+						toast({
+							text: '上传成功',
+							time: 1000
+						});
+						window.clearInterval(that.timer)
+					}
+				}, 1000)
+				var videos = document.getElementById('audios')
+				var split_vd = videos.duration
+				var split_vd_str = split_vd.toString();
+				var split_vd_num = parseInt(split_vd_str.substring(0,split_vd_str.indexOf('.')));
+				var fenzhong = Math.ceil(split_vd_num/60)
+				this.timeDuration = fenzhong
+				this.timemane = fenzhong * 10
+				this.jisuanShow = true
+				
+			},
+			async getTask() {   //上传作业
 				let Task = await this.service.about.getTask({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
 					bout_id: this.valuesid,
-					file: this.shipin
+					file: this.shipin,
+					task:1,
+					type:this.typeID,
 				})
-				console.log('提交作业', Task)
-				//成功
-				this.$refs.refs.show = true
-				this.title1 = '提交成功'
-				this.color = '#F29417'
+				if(Task.state==200){
+					this.$refs.refs.show = true
+					this.title1 = Task.msg
+					this.color = '#F29417'
+				}
 			},
-
-			// 将头像显示
-			handleFile: function(e) {
-				console.log(e)
+			// 上传视频
+			handleFile1: function(e) {
 				this.videoShow = false
 				this.loadings = true
 				this.jisuanShow = false
@@ -189,15 +243,33 @@
 					this.userInfo.avatar = res.result
 				}
 				reader.readAsDataURL(file)
-
 				let files = e.target.files[0]
 				let param = new FormData()
 				param.append('file', files)
-
 				param.append("user_id", localStorage.getItem('user_id'))
 				param.append('token', localStorage.getItem('token'))
-				this.getVidsubm(param)
-
+				this.getVidsubm1(param)
+			},
+			// 上传音频
+			handleFile2: function(e) {
+				this.videoShow = false
+				this.loadings = true
+				this.jisuanShow = false
+				let $target = e.target || e.srcElement
+				let file = $target.files[0]
+				var reader = new FileReader()
+				reader.onload = (data) => {
+					let res = data.target || data.srcElement
+					this.userInfo.avatar1 = res.result
+				}
+				reader.readAsDataURL(file)
+				let files = e.target.files[0]
+				console.log(files)
+				let param = new FormData()
+				param.append('file', files)
+				param.append("user_id", localStorage.getItem('user_id'))
+				param.append('token', localStorage.getItem('token'))
+				this.getVidsubm2(param)
 			},
 			input() {
 
@@ -205,12 +277,12 @@
 			loopBtn() {
 				this.Whether = !this.Whether
 				var video = document.querySelector('video')
-
-				console.log(this.Whether)
+				var audio = document.querySelector('audio')
 				if(this.Whether == true) {
 					this.show = !this.show
 				} else if(this.Whether == false) {
 					video.play()
+					audio.play()
 					this.width = '100%'
 					this.position = 'fixed'
 					this.left = '0'
@@ -219,7 +291,9 @@
 			},
 			videoBtn() {
 				var video = document.querySelector('video')
-				video.pause()
+				var audio = document.querySelector('audio')
+				video.play()
+				audio.play()
 				this.width = '150'
 				this.position = ''
 				this.left = ''
@@ -230,9 +304,10 @@
 				this.videoShow = true
 				this.userInfo.avatar = ''
 				this.show = !this.show
-
 				var video = document.querySelector('video')
-				video.pause()
+				var audio = document.querySelector('audio')
+				video.play()
+				audio.play()
 				this.width = '150'
 				this.position = ''
 				this.left = ''
@@ -241,20 +316,18 @@
 			xuanzeBtn() {
 				this.choiceShow = true
 			},
-			returnBtn(index) {
-				this.values = this.choiceArray[index].music
-				this.valuesid = this.choiceArray[index].id
-				console.log(this.valuesid)
-				//				this.kecheng = this.values
-				this.choiceShow = false
-			},
+			// returnBtn(index) {
+			// 	this.values = this.choiceArray[index].music
+			// 	this.valuesid = this.choiceArray[index].id
+			// 	this.choiceShow = false
+			// },
 			returnShow() {
 				this.choiceShow = false
 			},
-			footerBtn() {
+			footerBtn() { //提交
 				if(this.shipin == '') {
 					toast({
-						text: '请上传视频',
+						text: '请上传视频或音频',
 						time: 1000
 					});
 					return
@@ -263,13 +336,22 @@
 			}
 		},
 		created() {
-			this.getSubculum()
-			this.getEndculum()
+			this.values = this.$route.params.music
+			this.valuesid = this.$route.params.id
 		}
 	}
 </script>
 
 <style scoped="scoped" lang="scss">
+	/deep/.video_div{
+		.van-icon{
+			font-size: 26px;
+		}
+	}
+	.fileClass{color: rgba(62, 112, 147, 1);}
+	.ol_li{
+		li{width:50%;line-height: 40px;text-align: center;font-size: 14px;font-weight: 500;}
+	}
 	.choice {
 		width: 100%;
 		height: 100%;
@@ -419,7 +501,7 @@
 	
 	.footer {
 		padding: 0 15px;
-		margin-top: 90px;
+		margin-top: 50px;
 		button {
 			width: 100%;
 			height: 44px;

@@ -20,6 +20,24 @@
 			<button @click="makeBtn">确认</button>
 			<!-- <button :disabled="disabled" @click="makeBtn">预约</button> -->
 		</div>
+		<van-popup v-model="van_dialog">
+			<div class="van-dialogs">
+				<div class="van-dialog__header">提示</div>
+				<div class="van-dialog__content">
+					<div class="van-dialog__message van-dialog__message--has-title">
+                        {{msg}}
+					</div>
+				</div>
+				<div class="van-hairline--top van-dialog__footer van-dialog__footer--buttons">
+					<button class="van-button van-button--default van-button--large van-dialog__cancel" @click="qxbackSubmit">
+						<span class="van-button__text" >取消</span>
+					</button>
+					<button class="van-button van-button--default van-button--large van-dialog__confirm van-hairline--left" @click="qdbackSubmit">
+						<span class="van-button__text" >确认</span>
+					</button>
+				</div>
+			</div>
+		</van-popup>
 	</div>
 </template>
 
@@ -36,7 +54,9 @@
 				shijian:'',
 				hour:'',    
 				shijianArray:[],
-				shijianShow:false
+				shijianShow:false,
+				van_dialog:false,
+				msg:""
 			}
 		},
 		methods: {
@@ -45,7 +65,6 @@
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token')
 				})
-				console.log('上课时间', Bout.data.time)
 				this.timeArray = Bout.data.time
 			},
 		 
@@ -53,9 +72,7 @@
 				this.dataNum = index
 				this.hour = this.timeArray[index].name
 				this.hour = this.hour.split('(')[0]
-				console.log(this.hour)
 				this.fn()
-				console.log(index)
 				this.shijianArray = this.timeArray[index].text
 				if(this.shijianArray.length == 0){
 				this.shijianShow = false
@@ -66,12 +83,26 @@
 			shijianBtn(index){
 				this.shijianNum = index
 				this.shijian = this.shijianArray[index].name
-				console.log(this.shijian)
 				this.fn()
 			},
-			makeBtn() {
-				this.$router.go(-1);
+			async makeBtn() {
+				let time = (this.hour+' '+this.shijian)
+				let init = await this.service.personalCenter.tactime_add({
+					user_id: localStorage.getItem('user_id'),
+					token:localStorage.getItem('token'),
+					time:time
+				})
+				if(init.state==200){
+					this.van_dialog= true
+					this.msg = init.msg
+				}
 			},
+			qxbackSubmit(){     //取消绑定
+                this.van_dialog = false
+            },
+            qdbackSubmit(){     //确认绑定
+                this.$router.go(-1)
+            },
 			fn() {
 				if(this.dataNum >= 0 && this.shijianNum >= 0) {
 					this.disabled = false
@@ -91,6 +122,21 @@
 </script>
 
 <style scoped="scoped" lang="scss">
+  .van-dialogs{width:320px;overflow:hidden;font-size:16px;background-color:#fff;border-radius:16px;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transition:.3s;transition:.3s;-webkit-transition-property:opacity,-webkit-transform;transition-property:transform,opacity;transition-property:transform,opacity,-webkit-transform}@media (max-width:321px){
+        	.van-dialog{width:90%}}
+        .van-dialog__header{padding-top:24px;font-weight:500;line-height:24px;text-align:center}
+        .van-dialog__header--isolated{padding:24px 0}
+        .van-dialog__message{max-height:60vh;padding:24px;overflow-y:auto;font-size:14px;line-height:20px;white-space:pre-wrap;text-align:center;word-wrap:break-word;-webkit-overflow-scrolling:touch}
+        .van-dialog__message--has-title{padding-top:12px;color:#646566}
+        .van-dialog__message--left{text-align:left}
+        .van-dialog__message--right{text-align:right}
+        .van-dialog__footer{overflow:hidden;-webkit-user-select:none;user-select:none}
+        .van-dialog__footer--buttons{display:-webkit-box;display:-webkit-flex;display:flex}
+        .van-dialog__footer--buttons .van-button{-webkit-box-flex:1;-webkit-flex:1;flex:1}
+        .van-dialog .van-button{border:0}
+        .van-dialog__confirm,.van-dialog__confirm:active{color:#1989fa}
+        .van-dialog-bounce-enter{-webkit-transform:translate3d(-50%,-50%,0) scale(.7);transform:translate3d(-50%,-50%,0) scale(.7);opacity:0}
+        .van-dialog-bounce-leave-active{-webkit-transform:translate3d(-50%,-50%,0) scale(.9);transform:translate3d(-50%,-50%,0) scale(.9);opacity:0}
 	.content {
 		padding-bottom: 60px;
 	}

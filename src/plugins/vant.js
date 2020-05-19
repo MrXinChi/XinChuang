@@ -45,9 +45,11 @@ Vue.use(Popup);
 import { Rate } from 'vant';
 Vue.use(Rate);
 
-//
 import { Loading } from 'vant';
 Vue.use(Loading);
 //输入框
 import { Field } from 'vant';
 Vue.use(Field);
+//时间选择
+import { DatetimePicker } from 'vant';
+Vue.use(DatetimePicker);

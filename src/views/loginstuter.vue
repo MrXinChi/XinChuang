@@ -12,6 +12,7 @@
             <button @click="loginBtn(1)" class="fw_500 fs15 c_fff">教师登录</button>
           </div>
       </div>
+      <div class="next flex flex_x_center fs14 c_666" @click="nexthomeBtn">隨便看看>></div>
   </div>
 </template>
 
@@ -20,18 +21,21 @@ export default {
   components: {},
   data() {
     return {
-      
+        
     };
   },
   methods: {
     loginBtn(index) {
-     if(index==0){
-       this.$router.push("/student/login");
-     }else{
-       this.$router.push("/teacher/login");
-     }
+      if(index==0){
+        this.$router.push("/student/login");
+      }else{
+        this.$router.push("/teacher/login");
+      }
     },
- 
+    nexthomeBtn(){
+      this.$router.replace('/dashboard/homestu')
+      sessionStorage.setItem('tabBarActiveIndex', 0);
+    }
   }
 };
 </script>
@@ -63,4 +67,7 @@ export default {
   .bodybottom{
   	margin-top: 50px;
   }
+  .next{
+		margin-top:20px;
+	}
 </style>

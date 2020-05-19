@@ -5,22 +5,22 @@
 			<div class="course_left">
                 <ol>
                     <p>课程种类</p>
-                    <li v-for="(i,b) in curriculumList" :key="b" @click="curriculumBtn(i.id)" :class="[active==i.id?'active':'']">
+                    <li v-for="(i,b) in curriculumList" :key="b" @click="curriculumBtn(i.id,b)" :class="[active==b?'active':'']">
                         {{i.name}}
                     </li>
                 </ol>
             </div>
             <div class="course_right">
                 <ul>
-                    <li class="course_li flex flex_y_center" v-for="(i,b) in teacherList" :key="b" @click="courseBtn()">    
+                    <li class="course_li flex flex_y_center" v-for="(i,b) in teacherList" :key="b" @click="courseBtn(i.id)">    
                         <div class="course_li_left">
-                            <img src="../../../../assets/about/empty.png" alt="">
+                            <img :src="i.images" alt="">
                         </div>
                         <div class="course_li_center">
                             <span>{{i.name}}</span>
                         </div>
                         <div class="course_li_right ">
-                            <span>{{i.sex}}</span>
+                            <span>{{i.music}}</span>
                         </div>   
                     </li>
                 </ul>
@@ -33,30 +33,45 @@
 	export default {
 		data() {
 			return {
-               curriculumList:[
-                   {name:"钢琴",id:1},
-                   {name:"小提琴",id:2},
-                   {name:"筝",id:3},
-                   {name:"吉他",id:4},
-                   {name:"长笛",id:5},
-                   {name:"歌手",id:6},
-                ],
-                 teacherList:[
-                   {name:"张涵予",sex:"男"},
-                   {name:"张涵予",sex:"女"},
-                   {name:"张涵予",sex:"男"},
-                   {name:"张涵予",sex:"男"},
-                ],
-                active:1
+                curriculumList:[ ],
+                teacherList:[],
+                active:0,
+                
+
 			}
 		},
 		methods: {
-            curriculumBtn(id){
-                this.active = id
+            curriculumBtn(id,index){
+                this.active = index
+                this.initBtn(id)
+            },
+            courseBtn(id){  // 详情
+                this.teacherList.map(i=>{
+					if(i.id==id){
+               			this.$router.push({path:'/bindTeacherDetails',query:{id:id,teacherList:JSON.stringify(i)}})
+					}
+				})
+            },
+            async getHappyBtn(){  //乐器
+                let init = await this.service.home.getHappy({})
+                if(init.state==200){
+                    this.curriculumList = init.data
+                    this.initBtn( init.data[0].id)
+                }
+            },
+            async initBtn(id){
+                let init = await this.service.about.user_canbinding({
+                    user_id: localStorage.getItem('user_id'),
+                    token: localStorage.getItem('token'),
+                    music:id
+                })
+                if(init.state == 200){
+                    this.teacherList =  init.data 
+                }
             }
 		},
 		created() {
-		
+            this.getHappyBtn()
 		}
 	}
 </script>

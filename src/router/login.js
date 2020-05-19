@@ -12,6 +12,7 @@ import RegisterStu from '@/views/student/login/register'
 import SetupStu from '@/views/student/login/setup'
 
 import LoginStuTer from '@/views/loginstuter'
+
 export const routes = [
 	//teacher================
 		{
@@ -49,7 +50,8 @@ export const routes = [
 			path: '/loginstuter',
 			name: "loginstuter",
 			component: LoginStuTer
-		}
+		},
+		
 ];
 
 export default routes;

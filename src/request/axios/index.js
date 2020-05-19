@@ -1,5 +1,9 @@
 import axios from 'axios';
 import Qs from 'qs'
+import store from '@/store/index';//在js文件引入store模块
+// import Vue from 'vue'
+import router from '../../router'
+import toast from "@/utils/toast";
 
 var BASE_URL = 'https://fz.h9e.net/api/';
 
@@ -15,15 +19,6 @@ $http.interceptors.request.use(config => {
 }, err => {
     console.log(err)
 })
-
-
-// 添加响应拦截器
-$http.interceptors.response.use(function (res) {
-    return res.data;
-}, function (error) {
-    return Promise.reject(error);
-});
-
 
 /**
  * get方法，对应get请求
@@ -60,3 +55,29 @@ export function FILE(url, params) {
         }
     })
 }
+
+// 添加响应拦截器
+$http.interceptors.response.use(function (res) {
+    // console.log(res)
+    var code = res.data.state;
+    if(code == 10004){
+        toast({
+            text: '账号已在别处登陆',
+            time: 1000
+        });
+        router.push('/loginstuter')
+        window.localStorage.clear();
+    }
+     return res.data;
+ }, function (error) {
+     var str = error.message;
+     if (str.indexOf('Network Error') > -1) {
+         // Toast('网络错误')
+     } else if (str.indexOf('timeout') > -1) {
+         // Toast('请求超时')
+     } else {
+         // Toast('服务器错误')
+     }
+     // 对响应错误做点什么
+     return Promise.reject(error);
+ })

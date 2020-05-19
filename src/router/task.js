@@ -23,7 +23,7 @@ export const routes = [
 			component: LubmitHomeworkStu
 		},
 		{
-			path: '/student/submitHomeworks/:index',
+			path: '/student/submitHomeworks/:index/:music/:id',
 			name: "submitHomeworks",
 			component: LubmitHomeworkStus
 		},

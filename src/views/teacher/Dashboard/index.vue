@@ -99,9 +99,7 @@
             }
 		},
 		created(){
-			console.log(localStorage.getItem("showBottom"))
 			this.showBottom=localStorage.getItem("showBottom");
-			console.log(this.showBottom)
 		}
 	}
 </script>

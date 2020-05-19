@@ -1,8 +1,9 @@
 <template>
   <div class="header_wrapper">
-    <div class="rule" @click="handleToRuleDetail">
-      <i class="icon"></i>
-      <h1>规则</h1>
+    <!-- <div class="rule" @click="handleToRuleDetail"> -->
+    <div class="rule">
+      <!-- <i class="icon"></i>
+      <h1>规则</h1> -->
     </div>
     <div class="detail">
       <slot name="detail"></slot>

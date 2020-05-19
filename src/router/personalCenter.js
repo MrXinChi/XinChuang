@@ -16,6 +16,7 @@ import Finance from '@/views/teacher/personalCenter/finance/finance' // 财务�
 import MyCourse from '@/views/teacher/personalCenter/myCourse/myCourse' // 课程列表
 import Evaluate from '@/views/teacher/personalCenter/myCourse/evaluate' // 课程评价
 import Details from '@/views/teacher/personalCenter/myCourse/details' // 评价详情
+import HomeworkCorrecting from '@/views/teacher/personalCenter/homeworkCorrecting/homeworkCorrecting' // 批改作业
 //teacher---end
 //student--start
 import PersonalCenterInfoStu from '@/views/student/personalCenter/personalCenterInfo/personalCenterInfo' // 个人中心信息
@@ -46,6 +47,7 @@ import SubmitJob from '@/views/student/personalCenter/myTeacher/submitJob/submit
 import BindTeacher from '@/views/student/personalCenter/bindTeacher/bindTeacher' // 老师列表
 import SelectTeachers from '@/views/student/personalCenter/bindTeacher/selectTeachers' // 筛选老师
 import BindTeacherDetails from '@/views/student/personalCenter/bindTeacher/bindTeacherDetails' // 老师详情
+
 
 //latelyCurriculum 最近课程
 //myCurriculum 我的课程
@@ -96,7 +98,7 @@ export const routes = [
         component: MyStudent
     },
     {
-        path: '/myStudentDetail/:id',
+        path: '/myStudentDetail/:id/:status',
         name: "myStudentDetail",
         component: MyStudentDetail
     },
@@ -281,6 +283,12 @@ export const routes = [
         name: "bindTeacherDetails",
         component: BindTeacherDetails
     },
+    {
+        path: '/homeworkCorrecting',
+        name: "homeworkCorrecting",
+        component: HomeworkCorrecting
+    },
+    
     {
         path: '/myCurriculum',
         name: "myCurriculum",

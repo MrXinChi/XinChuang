@@ -4,13 +4,12 @@
 		
 		<div class="kecheng">
 			<div  @click="kechengBtn(i.id)" v-for="i in CourseListArray" class="kecheng-item">
-				<div class="kecheng-item-t flex flex_x_bten">
-					<div class="kecheng-item-t-l fs15 fw_b">{{i.name}}</div>
+				<div class="kecheng-item-t flex flex_y_center flex_x_bten">
+					<div class="kecheng-item-c fs14 fw_b">{{i.music}}</div>
 					<div class="kecheng-item-t-r fs15">{{i.time}}</div>
 				</div>
-				<div class="kecheng-item-c fs14 fw_b">帕格尼尼主题狂想</div>
 				<div class="kecheng-item-b flex flex_x_bten">
-					<div class="kecheng-item-b-l fs14">课堂分数：30分</div>
+					<div class="kecheng-item-b-l fs14">课堂分数：{{i.hour}}分</div>
 					<div class="kecheng-item-b-r fs15">抢单</div>
 				</div>
 			</div>
@@ -42,7 +41,6 @@ import toast from "@/utils/toast";
 					user_id: localStorage.getItem("user_id"),
 					token: localStorage.getItem("token")
 				});
-				console.log("抢单大厅", CourseList.data);
 				this.CourseListArray = CourseList.data
 			},
 			//抢单
@@ -131,7 +129,7 @@ import toast from "@/utils/toast";
 			}
 			.kecheng-item-c{
 				color: #838486;
-				margin-top: 15px;
+				// margin-top: 15px;
 			}
 			.kecheng-item-b{
 				margin-top: 15px;

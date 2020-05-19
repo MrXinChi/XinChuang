@@ -15,6 +15,7 @@
 </template>
 
 <script>
+    import toast from "@/utils/toast";
 	export default{
 		data(){
 			return{
@@ -31,16 +32,28 @@
 					branch:this.value,
 					text:this.text
 				})
-				console.log('评价', Evaluate)
-				alert('评价成功')
+				if(Evaluate.state==200){
+				    toast({
+						text: Evaluate.msg,
+						time: 1000
+					});	
+					this.text=""
+					this.value=0			
+				}
 			},
 			currBtn(){
 				if(this.text.length < 15){
-					alert('字数不够')
+					toast({
+						text: '字数不够',
+						time: 1000
+					});				
 					return
 				}
 				if(this.value  == 0){
-					alert('没评分')
+					toast({
+						text: '没评分',
+						time: 1000
+					});				
 					return
 				}
 				var culu_id = this.$route.params.id

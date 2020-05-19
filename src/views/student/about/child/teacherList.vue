@@ -3,18 +3,18 @@
 		<header-nav border title="老师列表"></header-nav>
 		<div class="course">
             <ol>
-                <li class="flex flex_y_center li_ol" v-for="(i,b) in 5" :key="b" @click="teacherBtn()">
+                <li class="flex flex_y_center li_ol" v-for="(i,b) in culinfoArray" :key="b" >
                     <div class="li_left">
-                        <img src="../../../../assets/about/empty.png" alt="">
+                        <img :src="i.images" alt="">
                     </div>
                     <div class="li_center">
                         <ul>
-                            <li>张涵予  男   钢琴</li>
-                            <li>12235656879</li>
-                            <li>大提琴柯老师</li>
+                            <li>{{i.name}}   {{i.music}}</li>
+                            <li>{{i.mobile}}</li>
+                            <li>{{i.music}}{{i.name}}</li>
                         </ul>
                     </div>
-                    <div class="li_right">
+                    <div class="li_right" @click="teacherBtn(i.id)">
                         <button>
                             查看评价
                         </button>
@@ -30,27 +30,18 @@
 		data() {
 			return {
 				culinfoArray: [],
-				status:""
+                status:"",
+                bout_id:0
 			}
 		},
 		methods: {
-            teacherBtn(){  //查看老师评价
-                this.$router.push('/evaluate')
+            teacherBtn(id){  //查看老师评价
+                this.$router.push({path:'/evaluate',query:{bout_id:this.bout_id,tac_id:id}})
             },
-			async getCulinfo(id) {
-				let Culinfo = await this.service.about.getCulinfo({
-					user_id: localStorage.getItem('user_id'),
-					token: localStorage.getItem('token'),
-					bout_id: id
-				})
-				this.culinfoArray = Culinfo.data
-			},
 		},
 		created() {
-			var id = this.$route.params.id
-			this.status = this.$route.params.status
-			console.log(this.status)
-			// this.getCulinfo(id)
+            this.bout_id = this.$route.query.id
+            this.culinfoArray = JSON.parse(this.$route.query.tac)
 		}
 	}
 </script>

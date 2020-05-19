@@ -27,18 +27,36 @@ export const services = {
     //个人简历
     getResume: (params) => POST("Hall/resume", params), // 获取个人信息
     setResume: (params) => POST("Hall/resume_eidt", params),
-
     //抢单大厅
     getCourseList: (params) => POST("Hall/hall", params),
-
     //我的课程
     getMyCourseList: (params) => POST("Hall/culum", params),
-
     //抢单
     setMyCourse: (params) => POST("Hall/rob", params),
+    //教师上课时间录入
+    tactime_add: (params) => POST("Hall/tactime_add", params),
+    //教师上课时间列表
+    tactime: (params) => POST("Hall/tactime", params),
+    //教师学生列表
+    tac_student: (params) => POST("Hall/tac_student", params),
+    //教师课程详情
+    tac_culinfo: (params) => POST("Hall/tac_culinfo", params),
+    //批改作业
+    tac_correction: (params) => POST("Hall/tac_correction", params),
+    //删除教师上课时间
+    tactime_del: (params) => POST("Hall/tactime_del", params),
+    //财务报表
+    Finance: (params) => POST("Hall/Finance", params),
+    //已上课时
+    Already: (params) => POST("Hall/Already", params),
+    //申请绑定的列表
+    apply: (params) => POST("Hall/apply", params),
+    //申请审核
+    examine: (params) => POST("Hall/examine", params),
+    
 	
 	//图片提交
-	setMyImgsubm: (params) => POST("Index/imgsubm", params),
+	setMyImgsubm: (params) => POST("Common/images", params),
 	//用户反馈
 	setFeedback: (params) => POST("My/feedback", params),
 	
@@ -47,7 +65,13 @@ export const services = {
 	//最近课程
 	setLately: (params) => POST("My/Lately", params),
 	//修改手机号
-	setUpmobile: (params) => POST("My/upmobile", params),
+    setUpmobile: (params) => POST("My/upmobile", params),
+    //课时轨迹
+    hourtrajectory: (params) => POST("My/hourtrajectory", params),
+    //获取全部教师
+    whole_tac: (params) => POST("My/whole_tac", params),
+   
+
 	
 };
 export default services;

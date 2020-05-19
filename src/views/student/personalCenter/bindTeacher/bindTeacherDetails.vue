@@ -3,19 +3,15 @@
 		<header-nav border title="老师详情"></header-nav>
 		<div class="course flex " >
             <div class="course_top flex flex_x_center" >
-                <img  src="../../../../assets/about/empty.png" alt="">
-                <button v-if="show">已经绑定</button>
+                <img  :src="teacherList[0].images" alt="">
+                <div class="course_li_right buttons1" v-if="teacherList.type==1"> 已绑定</div>
+                <div class="course_li_right buttons2" v-if="teacherList.type==2"> 待审核</div>
             </div>
             <div class="course_center">
-                <span>张涵予</span>
-                <span>男</span>
-            </div>
-            <div class="course_bottom"> 
-                <span>4587912356</span>
-                <button>钢琴</button>
+                <span>{{teacherList[0].name}}</span>
             </div>
         </div>
-        <div class="button" @click="bindingBtn" v-if="!show">
+        <div class="button" @click="bindingBtn" v-if="teacherList.type==3">
             <button >
                 申请绑定
             </button>
@@ -25,6 +21,7 @@
 				<div class="van-dialog__header">提示</div>
 				<div class="van-dialog__content">
 					<div class="van-dialog__message van-dialog__message--has-title">
+                        {{msg}}
 					</div>
 				</div>
 				<div class="van-hairline--top van-dialog__footer van-dialog__footer--buttons">
@@ -32,7 +29,7 @@
 						<span class="van-button__text" >取消</span>
 					</button>
 					<button class="van-button van-button--default van-button--large van-dialog__confirm van-hairline--left" @click="qdbackSubmit">
-						<span class="van-button__text" >确认绑定</span>
+						<span class="van-button__text" >确认</span>
 					</button>
 				</div>
 			</div>
@@ -47,22 +44,40 @@
                teacherList:[],
                 van_dialog:false,
                 idStatus:"",
-                show:false
+                show:false,
+                teacherList:{},
+                msg:"",
 			}
 		},
 		methods: {
             bindingBtn(){       //绑定提示
-                this.van_dialog = true
+                this.initBtn()
             },
             qxbackSubmit(){     //取消绑定
                 this.van_dialog = false
             },
             qdbackSubmit(){     //确认绑定
                 this.$router.push({path:'/bindTeacher',query:{id:this.idStatus}})
+            },
+            async initBtn(){
+                let init = await this.service.about.apply({
+                    user_id: localStorage.getItem('user_id'),
+                    token: localStorage.getItem('token'),
+                    tac_id :this.idStatus
+                })
+                if(init.state == 200){
+                   this.van_dialog = true
+                   this.msg = init.msg
+                }else{
+                   this.van_dialog = true
+                   this.msg = init.msg
+                }
             }
 		},
 		created() {
             this.idStatus = this.$route.query.id
+            this.teacherList = JSON.parse(this.$route.query.teacherList)
+            console.log(this.teacherList)
 		}
 	}
 </script>
@@ -98,17 +113,26 @@
                     height:100px;
                     border-radius: 50%;
                }
-               button{
-                   height:40px;
+               .buttons1{
+                   height: 15px;
                    font-size:14px;
                     color:#fff;
                     font-weight: 500;
                     padding:10px 15px;
-                    background:#1989fa;
+                    background:#07c160;
                     border-radius: 5px;
                     margin-left:30px ;
                }
-              
+              .buttons2{
+                   height: 15px;
+                   font-size:14px;
+                    color:#fff;
+                    font-weight: 500;
+                    padding:10px 15px;
+                    background:#3E7093;
+                    border-radius: 5px;
+                    margin-left:30px ;
+               }
            }
            .course_center{
                padding-left:60px;
@@ -144,7 +168,7 @@
                 font-size:16px;
                 color:#fff;
                 font-weight: 500;
-                padding:25px 80px;
+                padding:15px 80px;
                 background:#1989fa;
                 border-radius: 5px; 
             }

@@ -15,12 +15,12 @@ export const routes = [
 			component: DetailsPage
 		},
 		{
-			path: '/courseDetails/:id',
+			path: '/courseDetails/:id/:status/:aboutClass',
 			name: "courseDetails",
 			component: CourseDetails
 		},
 		{
-			path: '/courseDetails2/:id',
+			path: '/courseDetails2/:id/:status',
 			name: "courseDetails2",
 			component: CourseDetails2
 		},

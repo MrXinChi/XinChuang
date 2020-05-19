@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
 	  counter: 1000,
-	  userInfo:[]
+	  userInfo:[],
+	  LOADING: false
   },
   mutations: {
 	  jia(state){
@@ -17,7 +18,13 @@ export default new Vuex.Store({
 	  },
 	  save_userInfo(state,data){
 	  	state.userInfo = data
-	  }
+	  },
+	  showLoading(state) {
+		state.LOADING = true
+	  },
+	  hideLoading(state) {
+		state.LOADING = false
+	  },
   },
   actions: {
     showloader: ({ 

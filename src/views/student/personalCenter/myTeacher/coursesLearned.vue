@@ -2,15 +2,18 @@
 	<div class="container">
 		<header-nav border title="所学课程"></header-nav>
 		<div class="course " >
-			<ol class="flex" v-for="(i,b) in 3" :key="b">
+			<ol class="flex" v-for="(i,b) in curriculumList" :key="b">
                 <li class="course_left">
-                    <p>小提琴课</p>
-                    <p>上课时间 2020-4-15（周三）</p>
-                    <p>状态  已经上课</p>
+                    <p>{{i.music}}</p>
+                    <p>{{i.time}}</p>
+                    <p>状态  
+                        <span v-if="i.type==2">已上课</span>
+                        <span v-if="i.type==3">待上课</span>
+                    </p>
                 </li>
-                <li class="course_right flex" >
+                <li class="course_right flex" v-if="i.type==2" @click="appointmentBtn">
                     <button>
-                        我要约克
+                        我要约课
                     </button>
                 </li>
             </ol>
@@ -22,14 +25,28 @@
 	export default {
 		data() {
 			return {
-              
+                curriculumList:[],
 			}
 		},
 		methods: {
-          
+            async teachBtn(tac_id){
+                let init = await this.service.about.tac_culum({
+                    user_id: localStorage.getItem('user_id'),
+                    token: localStorage.getItem('token'),
+                    type:0,
+                    tac_id:tac_id
+                })
+                if(init.state==200){
+                    this.curriculumList = init.data
+                }
+            },
+            appointmentBtn(){
+                this.$router.push({path:'/detailsPage',query:{aboutClass:2,teacherId:this.$route.query.tac_id}})
+            }
 		},
 		created() {
-		
+            let tac_id = this.$route.query.tac_id
+            this.teachBtn(tac_id)
 		}
 	}
 </script>

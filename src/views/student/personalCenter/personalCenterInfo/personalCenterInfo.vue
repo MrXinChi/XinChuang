@@ -169,12 +169,13 @@
 			},
 			
 			async getUserEdit(file) {
+				console.log(file)
 				let UserEdit = await this.service.personalCenter.getUserEdit({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
 					file: file
 				})
-				console.log('修改头像', UserEdit.data)
+				console.log(UserEdit)
 			},
 			async getUserEdittit(title) {
 				let UserEdit = await this.service.personalCenter.getUserEdit({
@@ -188,9 +189,8 @@
 			async getImgsubm(params) {
 				let Imgsubm = await this.service.about.getImgsubm(params)
 				//				console.log('图片上传', Imgsubm.data)
-				this.Imgsubm = Imgsubm.data
-				console.log(this.Imgsubm)
 
+				this.Imgsubm = Imgsubm.tup
 				this.getUserEdit(this.Imgsubm)
 			},
 			toDetails(inx) {
@@ -228,10 +228,8 @@
 			},
 			// 将头像显示
 			handleFile: function(e) {
-
 				let $target = e.target || e.srcElement
 				let file = $target.files[0]
-				console.log(file)
 				let param = new FormData()
 				param.append('file', file)
 				param.append("user_id", localStorage.getItem('user_id'))

@@ -3,7 +3,7 @@
 		<header-nav border title="我的老师"></header-nav>
 		<div class="course " >
 			<van-swipe :loop="false" :show-indicators="false" :stop-propagation="false" :width="83">
-				<van-swipe-item v-for="(i,index) in kcArray" :key="index" @click="swiperBtn(i.id)" :class="[SwiperactiveNum==i.id ? 'Swiperactive' : 'Swiperactive1']" >
+				<van-swipe-item v-for="(i,index) in kcArray" :key="index" @click="swiperBtn(i.id,index)" :class="[SwiperactiveNum==index ? 'Swiperactive' : 'Swiperactive1']" >
 				{{i.name}}
 				<div style="width:30px;height:2px;background:rgba(68,136,99,1);margin:0 auto;" v-if="SwiperactiveNum==i.id"></div>
 				</van-swipe-item>
@@ -11,19 +11,17 @@
 		</div>	
 		<div class="teacherlist">
 			<ul>
-				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in 5" :key="index" @click="teacherBtn()">
+				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in teacherList" :key="index" @click="teacherBtn(item.id)">
 					<div class="teacherlist_li_left">
-						<img src="../../../../assets/about/empty.png" alt="">
+						<img :src="item.images" alt="">
 					</div>
 					<div class="teacherlist_li_center">
 						<ol>
 							<li class="flex">
-								<span>张三</span>   
-								<span>男</span>
-								<span>毕业院校</span>
-								<span>专业</span>
+								<span>{{item.name}}</span>   
+								<span>{{item.music}}</span>
 							</li>
-							<li>等钱绑定</li>
+							<li>绑定中</li>
 						</ol>
 					</div>
 					<div class="teacherlist_li_right">
@@ -39,27 +37,45 @@
 	export default {
 		data() {
 			return {
-				kcArray:[
-					{name:"小提琴",id:1},
-					{name:"钢琴",id:2},
-					{name:"古琴",id:3},
-					{name:"筝",id:4},
-					{name:"笛子",id:5},
-					{name:"大提琴",id:6},
-				],
-				SwiperactiveNum:1,
+				kcArray:[],
+				teacherList:[],
+				SwiperactiveNum:0,
 			}
 		},
 		methods: {
-          	swiperBtn(id){ 
-				this.SwiperactiveNum = id
+          	swiperBtn(id,index){ 
+				this.SwiperactiveNum = index
+				 this.initBtn( id)
 			},
-			teacherBtn(){
-				this.$router.push('/teacherDetails')
-			}
+			teacherBtn(id){
+				this.teacherList.map(i=>{
+					if(i.id==id){
+               			this.$router.push({path:'/teacherDetails',query:{id:id,teacherList:JSON.stringify(i)}})
+					}
+				})
+				
+			},
+			async getHappyBtn(){  //乐器
+                let init = await this.service.home.getHappy({})
+                if(init.state==200){
+                    this.kcArray = init.data
+                    this.initBtn( init.data[0].id)
+                }
+			},
+			async initBtn(id){
+                let init = await this.service.about.userTac({
+                    user_id: localStorage.getItem('user_id'),
+                    token: localStorage.getItem('token'),
+                    music:id
+                })
+                if(init.state == 200){
+                    this.teacherList =  init.data 
+                }
+            }
 		},
 		created() {
-		
+			
+			this.getHappyBtn()
 		}
 	}
 </script>
@@ -71,7 +87,7 @@
 		background: #f6f6f6;
 	}
    .Swiperactive{
-		font-size:15px;font-family:PingFang SC;font-weight:bold;color:#448863;
+		font-size:15px;font-family:PingFang SC;font-weight:bold;color:#448863;border-bottom:1px solid #448863;
 	}
 	.Swiperactive1{
 		font-size:15px;font-family:PingFang SC;font-weight:bold;
@@ -113,7 +129,7 @@
 						}
 						li:nth-of-type(1){
 							font-size: 14px;
-							justify-content: space-between;
+							justify-content: space-around;
 						}
 						li:nth-of-type(2){
 							text-align: right;

@@ -36,11 +36,11 @@ export default {
           isBorder: false
         },
         {
-          title: "退出登录",
+          title: "收货地址",
           isBorder: false
         },
         {
-          title: "收货地址",
+          title: "退出登录",
           isBorder: false
         },
       
@@ -55,10 +55,10 @@ export default {
           this.$router.push("/changePassword");
           break;
         case 1:
-          this.dialogShow = true;
+          this.$router.push("/deliveryAddress");
           break;
         case 2:
-          this.$router.push("/deliveryAddress");
+          this.dialogShow = true;
           break;
       }
     },

@@ -60,6 +60,7 @@
 					});
 					return;
 				}
+				console.log(Deng.id)
 				/*本地储存*/
 				localStorage.setItem("user_id", Deng.data.id);
 				localStorage.setItem("token", Deng.data.token);

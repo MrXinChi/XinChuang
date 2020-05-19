@@ -4,17 +4,15 @@
 		<div class="course " >
 			<ul class="flex flex_y_center">
                 <li class="course_left">
-                   <img src="../../../../assets/about/empty.png" alt="">
+                   <img :src="teacherDetails.images" alt="">
                 </li>
                 <li class="course_right">
                     <div>
-                        <span>教师</span>
-                        <span>男</span>
-                        <span>毕业</span>
-                        <span>专业</span>
+                        <span>{{teacherDetails.name}}</span>
+                        <span>{{teacherDetails.music}}</span>
                     </div>
                     <div>
-                        小提琴老师
+                      {{teacherDetails.music}} 老师
                     </div>
                 </li>
             </ul>
@@ -37,23 +35,26 @@
                 teacherlist:[
                     {name:"所学课程",id:1},
                     {name:"作业管理",id:2}
-                ]
+                ],
+                teacherDetails:{}
 			}
 		},
 		methods: {
           teacherlistBtn(id){
             switch(id){
                 case 1:
-                    this.$router.push('/coursesLearned')
+                    this.$router.push({path:'/coursesLearned',query:{tac_id:this.idStatus}})
                     break;
                 case 2:
-                    this.$router.push('/jobManagement')
+                    this.$router.push({path:'/jobManagement',query:{tac_id:this.idStatus,tac_name: this.name}})
                     break;
             }
           }	
 		},
 		created() {
-		
+            this.teacherDetails = JSON.parse(this.$route.query.teacherList)
+            this.idStatus =  this.teacherDetails.id
+            this.name =  this.teacherDetails.name
 		}
 	}
 </script>

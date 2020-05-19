@@ -127,9 +127,6 @@ export default {
     },
     kechengBtn() {},
     enterClassroomBtn(img, id) {
-    	console.log(img, id)
-    	alert(img)
-    	alert(id)
       globalWebView(
         "initRoom",
         VJsonStringify({

@@ -3,27 +3,35 @@
 		<header-nav title="提交视频作业"></header-nav>
 		<skeleton :height="15" background="#FAFAFA"></skeleton>
 		<div class="subtask">
-			<div class="subtask-choice fs16 fw_b">选择课程</div>
+			<div class="subtask-choice fs16 fw_b">选择教師</div>
 			<div @click="xuanzeBtn" class="subtask-input flex flex_y_center flex_x_bten">
-				<input readonly="readonly" class="fs15" type="text" placeholder="点击选择课程" :value="values" />
+				<input readonly="readonly" class="fs15" type="text" placeholder="选择教師" :value="values" />
 				<van-icon name="arrow" />
 			</div>
 			<div class="subtask-choice2 fs16 fw_b">上传作业</div>
 			<!--视频上传-->
+			<ol class="flex ol_li">
+				<li  v-for="(i,b) in fileArray" :key="b" @click="fileArrayBtn(i.id)" :class="[fileArrayNum==i.id?'fileClass':'']">
+					{{i.name}}
+				</li>
+			</ol>
 			<div class="item_bock flex">
 				<label v-if="videoShow">
-				<div class="jia flex_center">
-					<img src="@/assets/task/jia.png" alt="" />
-				</div>
-		   		<input type="file" accept="video/*" @input="input" @change="handleFile" class="hiddenInput" />
-		    	
-	    	</label>
+					<div class="jia flex_center">
+						<img src="@/assets/task/jia.png" alt="" />
+					</div>
+					<input v-if="audioShow" type="file" accept="video/*" @input="input" @change="handleFile" class="hiddenInput" />
+		    		<input v-else type="file" accept="audio/*" @input="input" @change="handleFile1" class="hiddenInput" />
+	    		</label>
 				<div class="video" v-else>
 					<video id="videos" accept="video/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar">
 						<source :src="userInfo.avatar" type="video/mp4" />
 					</video>
+					<audio id="audios" accept="audio/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar1">
+						<source :src="userInfo.avatar1" type="audio/mp4" />
+					</audio>
 					<div @click="loopBtn" class="loop">
-						<img v-if="loopimg" src="@/assets/student/task/loop.png" />
+						<img v-if="loopimg != true" src="@/assets/student/task/loop1.png" />
 					</div>
 					<van-loading v-if="loadings" vertical>加载中...</van-loading>
 					<div v-if="jisuanShow" class="loading_time fs15">{{reversedMessage}}</div>
@@ -49,13 +57,13 @@
 				<div class="flex_1 hoice_header_left  flex flex_y_center">
 					<img @click="returnShow" src="@/assets/student/components/return.png" />
 				</div>
-				<div class="title fs18 fw_b flex_2 flex flex_center">演奏水平</div>
+				<div class="title fs18 fw_b flex_2 flex flex_center">绑定老师</div>
 				<div class="flex_1"></div>
 			</div>
 			<skeleton :height="10" background="#FAFAFA"></skeleton>
 			<div v-if="stateShow" class="choice-center">
-				<div v-for="(i,index) in choiceArray" :key="index" @click="returnBtn(index)" class="choice-item flex flex_y_center">
-					<div class="item-left fs15">{{i.music}}</div>
+				<div v-for="(i,index) in teacherArray" :key="index" @click="returnBtn(i.id,i.name)" class="choice-item flex flex_y_center">
+					<div class="item-left fs15">{{i.name}}</div>
 				</div>
 			</div>
 			<div class="choice-none" v-else>
@@ -63,7 +71,7 @@
 				<div class="choice-none-title flex_center">暂时没有课程</div>
 			</div>
 		</div>
-		<frame2 :frameShow="frameShow" :title1="title1" :color="color" ref="refs"></frame2>
+		<frame2 :frameShow="frameShow" @returnBtn1="returnBtn1" :title1="title1" :color="color" ref="refs"></frame2>
 	</div>
 </template>
 
@@ -78,10 +86,14 @@
 		},
 		data() {
 			return {
+				fileArray:[{name:"上传视频",id:1},{name:"上传音频",id:2}],
+				fileArrayNum:1,
 				userInfo: {
 					avatar: '',
+					avatar1:""
 				},
 				videoShow: true,
+				audioShow:true,
 				Whether: true,
 				width: '150px',
 				position: '',
@@ -89,13 +101,15 @@
 				top: '',
 				show: false,
 				choiceArray: [],
+				teacherArray:[],
 				choiceShow: false,
 				values: '',
 				valuesid: '',
 				loopimg: true,
 				kecheng: '',
 				shipin: '',
-				frameShow: true,
+				yinpin:"",
+				frameShow: "",
 				title1: '',
 				color: null,
 				videoProgress: 10,
@@ -104,39 +118,61 @@
 				timeDuration:'',
 				timemane: '',
 				jisuanShow:false,
-				stateShow:null
+				stateShow:true,
+				typeID:1  //提交，区分音频或视频
 			}
 		},
 		computed: {
 			// 计算属性的 getter
 			reversedMessage: function() {
-				return '视频共' + this.timeDuration +'分钟' + "共" + this.timemane +'元'
+				return '视频：' + this.timeDuration +'分钟，' + "共" + this.timemane +'课时'
 			}
 		},
 		methods: {
-			async getSubculum() {
-				let Subculum = await this.service.task.getSubculum({
-					user_id: localStorage.getItem("user_id"),
-					token: localStorage.getItem("token")
-				});
-				console.log("选择课程", Subculum.data);
-				this.choiceArray = Subculum.data
-				if(Subculum.data != ''){
-					this.stateShow = true
-				}else{
-					this.stateShow = false
+			returnBtn1(){  //提交作业成功后
+				this.$refs.refs.show = false
+				this.values = ""
+				this.userInfo.avatar=""
+				this.userInfo.avatar1=""
+				this.jisuanShow = false
+				this.videoShow = true
+			},
+			fileArrayBtn(id){ 	//选择上传视频或者音频
+				this.fileArrayNum = id
+				this.typeID = id
+				this.userInfo.avatar = ''
+				this.userInfo.avatar1 = ''
+				this.jisuanShow = false
+				this.videoShow = true
+				switch(id){
+					case 1:
+						this.audioShow = true
+						break;
+					case 2:
+						this.audioShow = false
+						break;
 				}
 			},
+			// async getSubculum() {
+			// 	let Subculum = await this.service.task.getSubculum({
+			// 		user_id: localStorage.getItem("user_id"),
+			// 		token: localStorage.getItem("token")
+			// 	});
+			// 	this.teacherArray = Subculum.data
+			// 	if(Subculum.data != ''){
+			// 		this.stateShow = true
+			// 	}else{
+			// 		this.stateShow = false
+			// 	}
+			// },
 			async getVidsubm(params) {
-				let Vidsubm = await this.service.about.getImgsubm(params)
-				console.log('图片上传', Vidsubm)
-				this.shipin = Vidsubm.data
-
+				let Vidsubm = await this.service.about.video(params)
+				this.shipin = Vidsubm.tup
 				const that = this
 				that.timer = setInterval(function() {
-					console.log(document.readyState)
 					if(document.readyState === 'complete') {
 						that.loadings = false
+						that.loopimg = false
 						toast({
 							text: '上传成功',
 							time: 1000
@@ -145,36 +181,64 @@
 					}
 				}, 1000)
 				var videos = document.getElementById('videos')
-				
 				var split_vd = videos.duration
 				var split_vd_str = split_vd.toString();
   				var split_vd_num = parseInt(split_vd_str.substring(0,split_vd_str.indexOf('.')));
-				
 				var fenzhong = Math.ceil(split_vd_num/60)
-				
 				this.timeDuration = fenzhong
-				
 				this.timemane = fenzhong * 10
 				this.jisuanShow = true
-//				console.log(this.timeDuration)
+				
 			},
-			async getTask() {
+			async getVidsubm1(params) {
+				let Vidsubm = await this.service.about.audio(params)
+				this.shipin = Vidsubm.tup
+				const that = this
+				that.timer = setInterval(function() {
+					if(document.readyState === 'complete') {
+						that.loadings = false
+						that.loopimg = false
+						toast({
+							text: '上传成功',
+							time: 1000
+						});
+						window.clearInterval(that.timer)
+					}
+				}, 1000)
+				var videos = document.getElementById('audios')
+				var split_vd = videos.duration
+				var split_vd_str = split_vd.toString();
+				var split_vd_num = parseInt(split_vd_str.substring(0,split_vd_str.indexOf('.')));
+				var fenzhong = Math.ceil(split_vd_num/60)
+				this.timeDuration = fenzhong
+				this.timemane = fenzhong * 10
+				this.jisuanShow = true
+				
+			},
+			async getTask() {  //提交课程
 				let Task = await this.service.about.getTask({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
-					bout_id: this.valuesid,
-					file: this.shipin
+					file: this.shipin,
+					type:this.typeID,
+					task:2,
+					tac_id:this.valuesid
 				})
-				console.log('提交作业', Task)
 				//成功
-				this.$refs.refs.show = true
-				this.title1 = '提交成功'
-				this.color = '#F29417'
+				if(Task.state==200){
+					this.$refs.refs.show = true
+					this.title1 = Task.msg
+					this.color = '#F29417'
+					this.frameShow = true
+				}else{
+					this.$refs.refs.show = true
+					this.title1 = Task.msg
+					this.color = '#F29417'
+					this.frameShow = false
+				}
 			},
-
-			// 将头像显示
+			// 上传视频
 			handleFile: function(e) {
-				console.log(e)
 				this.videoShow = false
 				this.loadings = true
 				this.jisuanShow = false
@@ -186,28 +250,43 @@
 					this.userInfo.avatar = res.result
 				}
 				reader.readAsDataURL(file)
-
 				let files = e.target.files[0]
 				let param = new FormData()
 				param.append('file', files)
-
 				param.append("user_id", localStorage.getItem('user_id'))
 				param.append('token', localStorage.getItem('token'))
 				this.getVidsubm(param)
-
 			},
-			input() {
-
+			// 上传音频
+			handleFile1: function(e) {
+				this.videoShow = false
+				this.loadings = true
+				this.jisuanShow = false
+				let $target = e.target || e.srcElement
+				let file = $target.files[0]
+				var reader = new FileReader()
+				reader.onload = (data) => {
+					let res = data.target || data.srcElement
+					this.userInfo.avatar1 = res.result
+				}
+				reader.readAsDataURL(file)
+				let files = e.target.files[0]
+				let param = new FormData()
+				param.append('file', files)
+				param.append("user_id", localStorage.getItem('user_id'))
+				param.append('token', localStorage.getItem('token'))
+				this.getVidsubm1(param)
 			},
 			loopBtn() {
 				this.Whether = !this.Whether
 				var video = document.querySelector('video')
-
+				var audio = document.querySelector('audio')
 				console.log(this.Whether)
 				if(this.Whether == true) {
 					this.show = !this.show
 				} else if(this.Whether == false) {
 					video.play()
+					audio.play()
 					this.width = '100%'
 					this.position = 'fixed'
 					this.left = '0'
@@ -216,7 +295,9 @@
 			},
 			videoBtn() {
 				var video = document.querySelector('video')
+				var audio = document.querySelector('audio')
 				video.pause()
+				audio.pause()
 				this.width = '150'
 				this.position = ''
 				this.left = ''
@@ -226,38 +307,36 @@
 			dltBtn() {
 				this.videoShow = true
 				this.userInfo.avatar = ''
+				this.userInfo.avatar1 = ''
 				this.show = !this.show
 
 				var video = document.querySelector('video')
+				var audio = document.querySelector('audio')
 				video.pause()
+				audio.pause()
 				this.width = '150'
 				this.position = ''
 				this.left = ''
 				this.top = ''
 			},
-			xuanzeBtn() {
+			xuanzeBtn() {   //选择老师
 				this.choiceShow = true
 			},
-			returnBtn(index) {
-				this.values = this.choiceArray[index].music
-				this.valuesid = this.choiceArray[index].id
-				console.log(this.valuesid)
-				//				this.kecheng = this.values
+			returnBtn(id,name) {
+				this.values = name
+				this.valuesid =id
 				this.choiceShow = false
 			},
 			returnShow() {
 				this.choiceShow = false
 			},
-			footerBtn() {
+			input(){
 
-				//				var videos = document.getElementById('videos')
-				//				console.log(videos.duration)
-
-				console.log(this.valuesid)
-				console.log(this.shipin)
+			},
+			footerBtn() {  //提交
 				if(this.valuesid == '') {
 					toast({
-						text: '请选择课程',
+						text: '请选择老师',
 						time: 1000
 					});
 					return
@@ -270,16 +349,36 @@
 					return
 				}
 				this.getTask()
+			},
+			async teacherBtn(){  //获取老师列表
+				let init = await this.service.about.userTac({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+				})
+				if(init.state == 200){
+					this.teacherArray = init.data
+					this.stateShow = true
+				}else{
+					this.stateShow = false
+				}
 			}
 		},
 		created() {
-			this.getSubculum()
-//			stateShow
+			if(this.values !=null){
+				this.values = this.$route.query.tac_name
+				this.valuesid = this.$route.query.tac_id
+			}
+			// this.getSubculum()
+			this.teacherBtn()
 		}
 	}
 </script>
 
 <style scoped="scoped" lang="scss">
+	.fileClass{color: rgba(62, 112, 147, 1);}
+	.ol_li{
+		li{width:50%;line-height: 40px;text-align: center;font-size: 14px;font-weight: 500;}
+	}
 	.choice {
 		width: 100%;
 		height: 100%;
@@ -445,7 +544,7 @@
 	
 	.footer {
 		padding: 0 15px;
-		margin-top: 90px;
+		margin-top: 50px;
 		button {
 			width: 100%;
 			height: 44px;

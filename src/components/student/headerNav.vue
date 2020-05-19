@@ -3,8 +3,9 @@
     <header class="flex" :class="{border:border}">
       <div class="left flex_1 flex flex_y_center">
         <img v-if="returnShow" @click="handleBack" src="../../assets/student/components/return.png" />
+        <slot v-else name="left"></slot>
       </div>
-      <div class="title fs18 fw_b flex_2 flex flex_center">{{title}}</div>
+      <div class="title fs17 fw_b flex_2 flex flex_center">{{title}}</div>
       <div class="flex_1 flex flex_y_center flex_x_right">
         <slot name="right"></slot>
       </div>
@@ -32,6 +33,7 @@ export default {
   },
   methods: {
     handleBack() {
+      // this.$emit('handleBack')
       if (this.routerTitle == "") {
         window.history.length > 1
           ? this.$router.go(-1)

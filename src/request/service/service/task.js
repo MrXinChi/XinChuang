@@ -6,6 +6,9 @@ export const services = {
     getEndculum: (params) => { // 作业课程列表
         return POST("My/Endculum", params);
     },
+    taskinfo: (params) => { // 获取作业详清
+        return POST("My/taskinfo", params);
+    },
     getSubculum: (params) => { // 选择课程
         return POST("My/subculum", params);
     },
@@ -15,5 +18,6 @@ export const services = {
     getTask: (params) => { // 视频提交
         return POST("About/task", params);
     },
+
 };
 export default services;

@@ -47,8 +47,8 @@ export default {
       let userStarsData = await this.service.personalCenter.getUserStars(
         getUserData()
       );
-      if (userStarsData.data == " ") {
-        this.stars = 0;
+      if (userStarsData.data.stars == " ") {
+        this.stars = 0
       } else {
         this.stars = userStarsData.data.stars;
       }

@@ -4,16 +4,16 @@
        
 		<div class="teacherlist">
 			<ul>
-				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in 5" :key="index" >
+				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in taskArray" :key="index" >
 					<div class="teacherlist_li_left">
 						<ol>
-                            <li>大钢琴课</li>
-                            <li>30分钟</li>
+                            <li>{{item.music}}课</li>
+                            <li>{{item.hour}}</li>
                         </ol>    
 					</div>
 					<div class="teacherlist_li_center">
 						<ol>
-							<li class="flex">20-04-18 19:00---20:00</li>
+							<li class="flex">{{item.time}}</li>
                             <li class="flex " @click="operationDetailsBtn(index)">
                                 <button>提交</button>
                             </li>
@@ -30,7 +30,7 @@
 	export default {
 		data() {
 			return {
-			
+				taskArray:[]
 			}
 		},
 		methods: {
@@ -40,10 +40,27 @@
             operationDetailsBtn(index){  //作业详情
                 let status = index
                 this.$router.push({path:'/operationDetails',query:{status:status}})
+			},
+			async taskBtn(){
+				let init = await this.service.task.getEndculum({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+					type:2,
+					tac_id:this.tac_id
+				})
+				if(init.state == 200){
+					this.taskArray = init.data
+				}else{
+					toast({
+						text: init.msg,
+						time: 1000
+					});
+				}
 			}
 		},
 		created() {
-		
+			this.tac_id = this.$route.query.id
+			this.taskBtn()
 		}
 	}
 </script>

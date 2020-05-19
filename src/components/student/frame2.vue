@@ -7,6 +7,7 @@
 			</div>
 			<img class="img1" src="@/assets/components/res_m.png" />
 			<img class="img2" src="@/assets/components/res.png" />
+			<button @click="returnBtn1" class="fs14">确定</button>
 		</div>
 		
 		<div v-else class="frame-center">
@@ -16,6 +17,7 @@
 			</div>
 			<img class="img3" src="@/assets/components/req.png" />
 			<img class="img2" src="@/assets/components/req_m.png" />
+			<button @click="returnBtn1" class="fs14">确定</button>
 		</div>
 	</div>
 	
@@ -38,6 +40,9 @@
 		methods:{
 			frameBtn(){
 				this.$emit('frameBtn')
+			},
+			returnBtn1(){
+				this.$emit('returnBtn1')
 			}
 		}
 	}
@@ -71,16 +76,28 @@
 					width: 50px;
 					height: 90px;
 					position: absolute;
-					left: 17px;
+					right: 17px;
 					top: 52px;
 				}
 				.img2{
 					width: 90px;
 					height: 90px;
 					position: absolute;
-					top: 85px;
 					left: 50%;
 					margin-left: -45px;
+				}
+				button {
+					width: 92px;
+					height: 30px;
+					background: rgba(255, 255, 255, 1);
+					border: 1px solid rgba(194, 194, 194, 1);
+					border-radius: 1px;
+					color: #5E5E5E;
+					margin-top: 30px;
+					position: absolute;
+					top: 125px;
+					left: 50%;
+					margin-left:-46px;
 				}
 				.img3{
 					width: 50px;

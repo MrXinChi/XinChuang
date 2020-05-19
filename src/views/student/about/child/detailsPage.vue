@@ -24,7 +24,7 @@
 			<div v-if="shijianShow" class="detail">
 				<div class="age-name fs16 fw_b">请选择时间</div>
 				<div class="time-list flex flex_x_bten flex_warp">
-					<button :disabled="i.state == 1?false:true" class="time-item flex_center fs14" v-for="(i,index) in shijianArray" :key="index" @click="shijianBtn(index)" :class="{select:shijianNum==index}">{{i.name}}</button>
+					<button :disabled="i.state == 1?false:true" class="time-item flex_center fs14" v-for="(i,index) in shijianArray" :key="index" @click="shijianBtn(index)" :class="{select:shijianNum==index}">{{i.name}} </button>
 				</div>
 			</div>
 			<div v-else></div>
@@ -37,12 +37,13 @@
 			<div class="detail">
 				<div class="age-name fs16 fw_b">选择时长</div>
 				<div class="data-list flex flex_x_bten flex_warp">
-					<button class="data-item flex_center fs14" v-for="(i,index) in hourArray" :key="index" @click="timeBtn(index)" :class="{select:timeNum==index}">{{getplus}}</button>
+					<button class="data-item flex_center fs14" v-for="(i,index) in hourArray" :key="index" @click="timeBtn(index)" :class="{select:timeNum==index}">{{i.name}}分钟</button>
 				</div>
 			</div>
 		</div>
 		<div class="footer-btn">
-			<button :disabled="disabled" @click="makeBtn">预约</button>
+			<button v-if="aboutClass==1" :disabled="disabled" @click="makeBtn">预约</button>
+			<button v-if="aboutClass==2" :disabled="disabled" @click="makeBtn">预约</button>
 		</div>
 		<elastic-frame ref="refs" @returnBtn="returnBtn" :title1="title1" :title2="title2" :title3="title3" :imgs='imgs' :btn="btn"></elastic-frame>
 		<van-popup v-model="van_dialog">
@@ -50,7 +51,7 @@
 				<div class="van-dialog__header">提示</div>
 				<div class="van-dialog__content">
 					<div class="van-dialog__message van-dialog__message--has-title">
-						购买成功后，不可退款！
+						约课成功后，不可退款！
 					</div>
 				</div>
 				<div class="van-hairline--top van-dialog__footer van-dialog__footer--buttons">
@@ -105,7 +106,8 @@
 				timeindex:1,
 				shijianArray:[],
 				shijianShow:false,
-				aboutClass:""  //约课状态
+				aboutClass:"",  //约课状态
+				teacherId:''	//老师id
 			}
 		},
 		methods: {
@@ -114,32 +116,80 @@
 			},
 			qdbackSubmit(){		//预约的提示状态  确定
 				this.van_dialog = false
-				this.getBoutadd()
-
+				if(this.aboutClass==1){
+					this.getBoutadd()
+				}else{
+					this.tacculum_add()
+				}
 			},
-			async getBout() {
+			async getBout() {	//学生约课信息
 				let Bout = await this.service.about.getBout({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token')
 				})
-				this.ageArray = Bout.data.age
+				this.ageArray = Bout.data.level
+				this.musicArray = Bout.data.music
+				this.hourArray = Bout.data.hour
+				this.timeArray = Bout.data.time
+			},
+			async TeacherBtn() {	//教师约课信息
+				let Bout = await this.service.about.tac_bout({
+					tac_id:this.teacherId,
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token')
+				})
+				this.ageArray = Bout.data.level
 				this.musicArray = Bout.data.music
 				this.hourArray = Bout.data.hour
 				this.timeArray = Bout.data.time
 			},
 			async getImgsubm(params) {
 				let Imgsubm = await this.service.about.getImgsubm(params)
-				this.file = Imgsubm.data
+				this.file = Imgsubm.tup
 			},
+			//学生约课
 			async getBoutadd() {
 				let Boutadd = await this.service.about.getBoutadd({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
-					age:this.age,
+					level:this.age,
 					music:this.music,
 					time:this.hour+' '+this.shijian,
 					file:this.file,
 					hour:this.time
+				})
+				this.boutaddState = Boutadd.state
+				if(Boutadd.state==200){
+					this.title1 = '恭喜您！'
+					this.title2 = '购买成功'
+					this.title3 = '请开课三分钟前进入教室'
+					this.btn = '返回首页'
+					this.imgs = cg
+					this.$refs.refs.show = true
+					this.age="";
+					this.music="",
+					this.hour="";
+					this.shijian="";
+					this.file="";
+					this.time="";
+				}else{
+					this.title1 = '很抱歉'
+					this.title2 = Boutadd.msg
+					this.btn = '我知道了'
+					this.imgs = sb
+					this.$refs.refs.show = true
+				}
+			},
+			//老师约课
+			async tacculum_add() {
+				let Boutadd = await this.service.about.tacculum_add({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+					music:this.music,
+					time:this.hour+' '+this.shijian,
+					file:this.file,
+					hour:this.time,
+					tac_id:this.teacherId
 				})
 				this.boutaddState = Boutadd.state
 				if(Boutadd.state==200){
@@ -164,7 +214,6 @@
 					this.$refs.refs.show = true
 				}
 			},
-
 			afterRead(file) {
 				let files  = this.fileList[0].file
 				let param = new FormData()
@@ -190,10 +239,10 @@
 				this.fn()
 				this.shijianArray = this.timeArray[index].text
 				if(this.shijianArray.length == 0){
-				this.shijianShow = false
-			}else{
-				this.shijianShow = true
-			}
+					this.shijianShow = false
+				}else{
+					this.shijianShow = true
+				}
 			},
 			timeBtn(index) {
 				this.timeNum = index
@@ -216,38 +265,51 @@
 				}
 			},
 			fn() {
-				if(this.ageNum >= 0 && this.styleNum >= 0 && this.dataNum >= 0 && this.timeNum >= 0 && this.shijianNum >= 0) {
-					this.disabled = false
+				if(this.aboutClass == 1){
+					if(this.ageNum >= 0 && this.styleNum >= 0 && this.dataNum >= 0 && this.timeNum >= 0 && this.shijianNum >= 0) {
+						this.disabled = false
+					}
+				}else{
+					if( this.styleNum >= 0 && this.dataNum >= 0 && this.timeNum >= 0 && this.shijianNum >= 0) {
+						this.disabled = false
+					}
 				}
+				
 			},
 
 			returnBtn() {   //返回首页
-				console.log(this.boutaddState)
 				if(this.boutaddState == '200'){
-					sessionStorage.setItem('tabBarActiveIndex', 0);
-					this.$router.push('/dashboard/homestu')
+					sessionStorage.setItem('tabBarActiveIndex', 1);
+					this.$router.push('/dashboard/aboutstu')
 				}else{
 					this.$refs.refs.show = false
 				}
 			}
 		},
-		computed: {
-			getplus: function() {
-				let result = null;
-				for(var i = 0; i < this.hourArray.length; i++) {
-					result = this.hourArray[i].name
-				}
-				return result + '分钟'
-			}
-		},
+		// computed: {
+		// 	getplus: function() {
+		// 		let result = null;
+		// 		for(var i = 0; i < this.hourArray.length; i++) {
+		// 			result = this.hourArray[i].name
+		// 		}
+		// 		console.log(result)
+		// 		return result + '分钟'
+		// 	}
+		// },
 		created() {
-			this.getBout()
 			if(this.shijianArray.length == 0){
 				this.shijianShow = false
 			}else{
 				this.shijianShow = true
 			}
 			this.aboutClass = this.$route.query.aboutClass
+			this.teacherId = this.$route.query.teacherId
+			if(this.aboutClass==2){
+				this.TeacherBtn()
+			}else{
+				this.getBout()
+			}
+			
 		}
 	}
 </script>

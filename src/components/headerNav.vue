@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     handleBack() {
+      // this.$emit('handleBack')
       if (this.routerTitle == "") {
         window.history.length > 1
           ? this.$router.go(-1)

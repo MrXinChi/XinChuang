@@ -1,62 +1,72 @@
 <template>
   <div class="container_">
-    <header-nav title="学生信息"></header-nav>
+    <header-nav title="课程详细"></header-nav>
 
-    <div class="content">
-      <div class="item_list">
+    <div class="content" v-if="tacCulinfo.state==1">
+      <div class="item_list flex_y_center">
          <div class="item_left">
-          <img src="@/assets/student/tabber/about.png" class="avatar" />
+          <img :src="tacCulinfo.images" class="avatar" />
         </div>
         <div class="item_right">
           <div class="item_title">
-            昵称
-            <span>女</span>
-            <span>22</span>
+            昵称：{{tacCulinfo.userName}}
             <p>
-              1555484854
+              {{tacCulinfo.mobile}}
             </p> 
           </div> 
         </div>
       </div>
     </div>
-<!-- 待上课-start -->
- <div class="contents"  v-if="status==1">
-      <div class="item_left">
-        <div class="item">
-          <div class="item_lefts">所报课程</div>
-          <div class="item_rights">钢琴课</div>
-          <div class="item_rights"><span>20分钟</span></div>
-        </div>
-        <div class="item_time">2020-04-18  20：00--21:00</div>
-      </div>
-      <div class="item_right">
-        <img src="@/assets/personalCenter/u93.png" class="avatar" />
-        <span>待上课</span>
-      </div>
-  </div>
-<!-- 待上课-end -->
-
 
 <!-- 已上课-start -->
-  <div class="contents"  v-if="status!=1">
+  <div class="contents"  >
       <div class="item_left">
         <div class="item">
-          <div class="item_lefts">所报课程</div>
-          <div class="item_rights">钢琴课</div>
-          <div class="item_rights"><span>20分钟</span></div>
+          <div class="item_lefts">所报课程：</div>
+          <div class="item_rights">{{tacCulinfo.music}}课  {{tacCulinfo.hour}}分钟</div>
         </div>
-        <div class="item_time">2020-04-18  20：00--21:00</div>
+        <div class="item_time">{{tacCulinfo.time}}</div>
       </div>
-      <div class="item_right">
+      <div class="item_right" v-if="tacCulinfo.state==2">
         <img src="@/assets/personalCenter/u69.png" class="avatar" />
-        <span>已上课</span>
+        <span >已上课</span>
+      </div>
+      <div class="item_right" v-if="tacCulinfo.state==4">
+        <img src="@/assets/personalCenter/u69.png" class="avatar" />
+        <span >已批改</span>
+      </div>
+      <div class="item_right" v-if="tacCulinfo.state==1">
+        <img src="@/assets/personalCenter/u93.png" class="avatar" />
+        <span >未上课</span>
+      </div>
+      <div class="item_right" v-if="tacCulinfo.state==3">
+        <img src="@/assets/personalCenter/u93.png" class="avatar" />
+        <span >未批改</span>
       </div>
   </div>
-  <div class="detail_list" v-if="status!=1">
+  <div class="detail_list"  v-if="tacCulinfo.state!=1">
     <label>作业详情</label>
     <div class="detail_item">
-      <img src="@/assets/personalCenter/u71.png" class="avatar" />
-      <img src="@/assets/personalCenter/u71.png" class="avatar" />
+      <video controls class="course-viewo" v-for="(i,b) in tacCulinfo.task" :key="b" :src="i" v-if="tacCulinfo.task_type==1">
+				<source src="myvideo.mp4" type="video/mp4"></source>
+				<source src="myvideo.ogv" type="video/ogg"></source>
+				<source src="myvideo.webm" type="video/webm"></source>
+				<object width="" height="" type="application/x-shockwave-flash" data="myvideo.swf">
+					<param name="movie" value="myvideo.swf" />
+					<param name="flashvars" value="autostart=true&amp;file=myvideo.swf" />
+				</object>
+				当前浏览器不支持 video直接播放，点击这里下载视频： <a href="myvideo.webm">下载视频</a>
+			</video>
+			<audio controls class="course-viewo" v-for="(i,b) in tacCulinfo.task" :key="b" :src="i" v-if="tacCulinfo.task_type==2">
+				<source src="myaudio.MP3" type="myaudio/mp4"></source>
+				<source src="myaudio.Ogg" type="myaudio/ogg"></source>
+				<source src="myaudio.Wav" type="myaudio/webm"></source>
+				<object width="" height="" type="application/x-shockwave-flash" data="myaudio.swf">
+					<param name="movie" value="myaudio.swf" />
+					<param name="flashvars" value="autostart=true&amp;file=myaudio.swf" />
+				</object>
+			</audio>
+      
     </div>
     <div class="item_bottom">
       <label>批改作业</label>
@@ -67,7 +77,7 @@
         type="textarea"
         placeholder="请输入内容"
       />
-       <van-button class="submit" color="rgba(22, 155, 213, 1)">提交</van-button>
+       <van-button v-if="tacCulinfo.state !=4" @click="submitBtn(tacCulinfo.id)" class="submit" color="rgba(22, 155, 213, 1)">提交</van-button>
     </div>
    
   </div>
@@ -77,21 +87,68 @@
 
 
 <script>
+import toast from "@/utils/toast";
 export default {
   data() {
     return {
       message:'',
-      status:''
+      status:'',
+      id:"",
+      tacCulinfo:{},
+      timer: '',
     };
   },
-  methods: {},
+  methods: {
+    async taskDetails(id){
+      let init = await this.service.personalCenter.tac_culinfo({
+        user_id: localStorage.getItem("user_id"),
+        token: localStorage.getItem("token"),
+        id:id
+      })
+      if(init.state == 200){
+        this.tacCulinfo = init.data
+        this.message = this.tacCulinfo.text
+      }
+    },
+    async submitBtn(){  //批改作业
+      if(this.message==""){
+        toast({
+          text:"请填写作业内容",
+          time: 1000
+        });
+        return
+      }
+      let init = await this.service.personalCenter.tac_correction({
+        user_id: localStorage.getItem("user_id"),
+        token: localStorage.getItem("token"),
+        text:this.message,
+        task_id:this.id
+      })
+      if(init.state == 200){
+        toast({
+          text:init.msg,
+          time: 1000
+        });
+        this.timer = setTimeout(this.$router.push('/myStudent'), 2000);
+      }
+    },
+  },
+  beforeDestroy() {
+    clearTimeout(this.timer);
+  },
   created(){
-    this.status=this.$route.params.id;
+    this.id=this.$route.params.id;
+    this.status=this.$route.params.status;
+    this.taskDetails(this.id)
   }
 };
 </script>
 
 <style scoped lang="scss">
+.course-viewo{
+		width: 200px;
+		margin: 7.5px 0;
+	}
 .container_ {
   width: 100%;
   min-height: 100%;
@@ -158,7 +215,7 @@ export default {
       span{
         position: relative;
         top:-37px;
-        left: 25px;
+        left: 30px;
         @include word(15, #23252f, bold);
       }
     }

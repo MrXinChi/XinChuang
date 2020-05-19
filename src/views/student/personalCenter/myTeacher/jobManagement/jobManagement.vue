@@ -3,23 +3,28 @@
 		<header-nav border title="作业管理">
             <div @click="makeBtn"  class="fs14 button" slot="right">提交作业</div>
         </header-nav>
-        <div class="flex flex_y_center container_text">
+        <!-- <div class="flex flex_y_center container_text">
             <img src="../../../../../assets/student/personalCenter/shaixuan.png" alt="">
             筛选
-        </div>
+        </div> -->
 		<div class="teacherlist">
 			<ul>
-				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in 5" :key="index" @click="operationDetailsBtn()">
+				<li class="teacherlist_li flex flex_y_center" v-for="(item,index) in taskArray" :key="index" @click="operationDetailsBtn(item.id)">
 					<div class="teacherlist_li_left">
 						<ol>
-                            <li>大钢琴课</li>
-                            <li>30分钟</li>
+                            <li>{{item.music}}课</li>
+                            <li>{{item.hour}}</li>
                         </ol>    
 					</div>
 					<div class="teacherlist_li_center">
 						<ol>
-							<li class="flex">20-04-18 19:00---20:00</li>
-							<li>作业已提交</li>
+							<li class="flex">{{item.time}}</li>
+							<li>
+								<div v-if="item.status == 1" class="kecheng_bottom_r fs14">详情</div>
+								<div v-else-if="item.status == 2" class="kecheng_bottom_r fs14">提交作业</div>
+								<div v-else-if="item.status == 3" class="kecheng_bottom_r fs14">未阅读</div>
+								<div v-else-if="item.status == 4" class="kecheng_bottom_r fs14">已阅读</div>
+							</li>
 						</ol>
 					</div>
 					<div class="teacherlist_li_right">
@@ -32,22 +37,45 @@
 </template>
 
 <script>
+import toast from "@/utils/toast";
+
 	export default {
 		data() {
 			return {
-			
+				tac_id:"",   //教师id
+				tac_name:"",//教师姓名
+				taskArray:[]
 			}
 		},
 		methods: {
-            makeBtn(){      //提交作业
-                this.$router.push('/submitJob')
+			makeBtn(){      //提交作业
+                this.$router.push({path:'/student/submitHomework',query:{tac_id:this.tac_id,tac_name:this.tac_name}})
             },
-			operationDetailsBtn(){  //作业详情
-                this.$router.push('/operationDetails')
+			operationDetailsBtn(id){  //作业详情
+				let status = 2
+                this.$router.push(`/courseDetails2/${id}/${status}`)
+			},
+			async taskBtn(){
+				let init = await this.service.task.getEndculum({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+					type:0,
+					tac_id:this.tac_id
+				})
+				if(init.state == 200){
+					this.taskArray = init.data
+				}else{
+					toast({
+						text: init.msg,
+						time: 1000
+					});
+				}
 			}
 		},
 		created() {
-		
+			this.tac_id = this.$route.query.tac_id
+			this.tac_name = this.$route.query.tac_name
+			this.taskBtn()
 		}
 	}
 </script>

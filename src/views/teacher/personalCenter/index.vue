@@ -7,11 +7,11 @@
         <div class="username">{{userInfo.userName}}</div>
       </div>
       <div class="list">
-        <div class="item" @click="toDetails('classHour')">
-          <div class="count">0</div>
+        <div class="item" >
+          <div class="count">{{sum}}</div>
           <div class="item_title">已上课时</div>
         </div>
-        <div class="item" @click="toDetails('scores')">
+        <div class="item" >
           <div class="count">{{userInfo.scores}}</div>
           <div class="item_title">我的评分</div>
         </div>
@@ -79,6 +79,11 @@ export default {
           title: "我的学生",
           isBorder: false
         },
+         {
+          img: require("@/assets/student/personalCenter/icon_list_5.png"),
+          title: "批改作业",
+          isBorder: false
+        },
         {
           img: require("@/assets/personalCenter/icon_list_6.png"),
           title: "帮助中心",
@@ -89,12 +94,11 @@ export default {
           title: "设置",
           isBorder: true
         }
-      ]
+      ],
+      sum:0
     };
   },
-  created() {
-    this.getData();
-  },
+  
   methods: {
     async getData() {
       let userInfoData = await this.service.personalCenter.getUserInfo(
@@ -102,6 +106,14 @@ export default {
       );
       this.userInfo.avatar = userInfoData.data.images;
       this.userInfo.userName = userInfoData.data.name;
+    },
+    async alreadyBtn(){
+      let userInfoData = await this.service.personalCenter.Already(
+        getUserData()
+      )
+      if(already.state==200){
+        this.sum=already.data.sum
+      }
     },
     // 跳转个人信息
     handleToPersonalCenterInfo() {
@@ -131,23 +143,30 @@ export default {
           this.$router.push("/myStudent");
           break;
         case 7:
+          this.$router.push("/homeworkCorrecting");
+          break; 
+        case 8:
           this.$router.push("/helpCenter");
           break;
-        case 8:
+        case 9:
           this.$router.push("/securitySetting");
           break;
-        case "classHour":
-          this.$router.push("/myClassHour");
-          break;
-        case "scores":
-          this.$router.push("/myScores");
-          break;
+        // case "classHour":
+        //   this.$router.push("/myClassHour");
+        //   break;
+        // case "scores":
+        //   this.$router.push("/myScores");
+        //   break;
       }
     },
     handleToSetting() {
       this.$router.push("/securitySetting");
     }
-  }
+  },
+  created() {
+    this.getData();
+    this.alreadyBtn()
+  },
 };
 </script>
 
