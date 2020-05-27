@@ -6,8 +6,7 @@
 			<div class="dropdown">
 				<img src="@/assets/personalCenter/icon-search.png" class="dropbtn" @click="menuItem=true">
 				<div class="dropdown-content" v-if="menuItem">
-					
-					<a href="#" v-for="(i,b) in aArray" :key="b" @click="aBTN(i.id)">{{i.name}}</a>
+					<a  v-for="(i,b) in aArray" :key="b" @click="aBTN(i.id)">{{i.name}}</a>
 				</div>
 			</div>
 		</div>
@@ -23,20 +22,35 @@
 				<div class="share_item">
 				<div class="item_left">{{i.music}}<p>{{i.hour}}分钟</p></div>
 				<div class="item_right">{{i.time}}
-					<p v-if="i.status==1" class="status">待上课</p>
-					<p v-if="i.status==2" class="status">已完成</p>
+					<p v-if="i.state==1" class="status">待上课</p>
+					<p v-if="i.state==2" class="status">已完成</p>
 				</div>
 				</div>
 				<div class="share_item">
-				<div class="item_left">授课时间</div>
-				<div class="item_right">{{i.time_two}}</div>
+					<div class="item_left">授课时间</div>
+					<div class="item_right">{{i.time_two}}</div>
+				</div>
+				<div class="content-right share_item" >
+					<div class="item_left" >乐谱图片</div>
+					<div class="item_right">
+						<ul class="flex ">
+							<li v-for="(ih,b) in i.file" :key="b" >
+								<p>标题：{{ih.title_image}}</p>
+								<div class="imgdiv">
+									<van-icon name="cross" @click="removeBtn(i.id,b)" />
+									<img :src="ih.image" alt="" @click="musicScoreBtns(i.id,1,b)">
+								</div>
+							</li>
+						</ul>
+						<button @click="musicScoreBtn(i.id,2)">上传乐谱</button>
+					</div>
 				</div>
 				<div class="share_item">
-				<div class="item_left">提示</div>
-				<div class="item_right">上课时间为：{{i.time}}<p>请您在上课时间提前五分钟进入课堂</p></div>
+					<div class="item_left">提示</div>
+					<div class="item_right">上课时间为：{{i.time}}<p>请您在上课时间提前五分钟进入课堂</p></div>
 				</div>
 			</div>
-			<div class="submit" @click="enterClassroomBtn(i.images,i.id)">
+			<div class="submit" @click="enterClassroomBtn(i.file,i.id)">
 				<van-button type="info">进入课堂</van-button>
 			</div>
         
@@ -55,17 +69,62 @@ import toast from "@/utils/toast";
 					{name:"待上课",id:1},
 					{name:"已完成",id:2}
 				],
+				fileList: [],
+				file:[],
 				CourseListArray:[],
 				menuItem:false,
-				type:3,
+				type:2,
 				type_two:1
 			}
 		},
 		methods:{
+			musicScoreBtn(id,type){			//上传乐谱
+				this.$router.push({path:'/photo',query:{id:id,type:type}})
+			},
+			musicScoreBtns(id,type,index){
+				this.CourseListArray.map(i=>{	//修改乐谱
+					if(i.id == id){
+						this.$router.push({path:'/photo',query:{id:id,type:type,index:index,file:JSON.stringify(i.file[index])}})
+					}
+				})
+			},
+			async removeBtn(id,index){
+				let init = await this.service.personalCenter.Music({
+					...getUserData(),
+					culum_id:id,
+					index:index,
+					type:2
+				})
+				if(init.state==200){
+					toast({
+						text: init.msg,
+						time: 1000
+					})
+					this.myTask()
+				}
+			},
 			aBTN(id){
-				type_two = id
+				console.log(id)
+				this.type_two = id
+				this.myTasks()	
+			},
+			async myTasks(){
+				let init = await this.service.personalCenter.getMyCourseList({
+					user_id: localStorage.getItem("user_id"),
+					token: localStorage.getItem("token"),
+					type:this.type,
+					type_two:this.type_two
+				})
+				if(init.state == 200){
+					this.menuItem = false
+					this.CourseListArray = init.data
+				}
 			},
 			enterClassroomBtn(img, id) {  //进入课堂
+				// let file = this.$route.query.file
+				// if(file!=undefined){
+				// 	img = file
+				// }
 				globalWebView(
 					"initRoom",
 					VJsonStringify({
@@ -116,6 +175,44 @@ import toast from "@/utils/toast";
 </script>
 
 <style scoped="scoped" lang="scss">
+
+	.content-right {
+		height:100%!important;
+        button {
+          width: 92px;
+          height: 30px;
+          background: rgba(62, 112, 147, 1);
+          border-radius: 1px;
+		  color:#fff;
+        }
+		.item_left{
+			width:30%;
+		}
+		.item_right{
+			width:70%;
+			ul{
+				flex-wrap: wrap;
+				margin: 0 0 10px 0;
+				li{
+					margin:5px 10px 0 0;
+					.imgdiv{
+						/deep/.van-icon{
+							font-size:14px;
+							font-weight: bold;
+							color:#000;
+							top:15px;
+						}
+						img{
+							// width:60px;
+							height:60px;
+							display: block;
+						}
+					}
+					
+				}
+			}
+		}
+      }
 	.container {
 		width: 100%;
 		height: 100%;

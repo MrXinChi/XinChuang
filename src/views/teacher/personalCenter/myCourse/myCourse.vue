@@ -48,7 +48,7 @@
           <span class="fs14 fw_500">{{i.time_two}}</span>
         </div>
         <div class="flex flex_x_right orderList_divs" >
-          <van-button @click="newTime" icon="plus" type="info" >新增时间段</van-button>
+          <van-button @click="newTime(i.id)" type="info" >总结</van-button>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
               <div class="item_right">上课时间为：{{i.time}}<p>请您在上课时间提前五分钟进入课堂</p></div>
             </div>
           </div>
-          <div class="submit">
+          <div class="submit" @click="enterClassroomBtn(i.images,i.id)">
             <van-button type="info">进入课堂</van-button>
           </div>
         
@@ -120,8 +120,18 @@ export default {
     };
   },
   methods: {
-    newTime(){     //新增时间段
-      this.$router.push('/detailsPageTeacher')
+    enterClassroomBtn(img, id) {  //进入课堂
+      globalWebView(
+        "initRoom",
+        VJsonStringify({
+        ...getPersonalData(),
+        id: id,
+        image: img
+        })
+      );
+    },
+    newTime(id){     //新增时间段
+      this.$router.push({path:'/summary',query:{id:id}})
     },
     taskBtn(id){   //切换列表
       this.taskNum = id

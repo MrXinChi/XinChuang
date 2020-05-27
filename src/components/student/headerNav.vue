@@ -2,6 +2,7 @@
   <div>
     <header class="flex" :class="{border:border}">
       <div class="left flex_1 flex flex_y_center">
+        <img v-if="returnShop" @click="handleBacks" src="../../assets/student/components/return.png" />
         <img v-if="returnShow" @click="handleBack" src="../../assets/student/components/return.png" />
         <slot v-else name="left"></slot>
       </div>
@@ -18,6 +19,10 @@
 export default {
   props: {
     title: String,
+    returnShop: {
+      type: Boolean,
+      default: false
+    },
     returnShow: {
       type: Boolean,
       default: true
@@ -41,6 +46,9 @@ export default {
         return;
       }
       this.$router.push(this.routerTitle);
+    },
+    handleBacks(){
+      this.$emit('handleBacks')
     }
   }
 };

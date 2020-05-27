@@ -21,8 +21,14 @@
 			<div class="course-title fs16 fw_b">上课学生</div>
 			<div class="course_times fs15 flex_center">{{culinfoArray[0].userName}}</div>
 			<div class="course-title fs16 fw_b">曲谱图片</div>
-			<img class="course-images" :src="culinfoArray[0].image" />
+			<div v-for="(i,b) in culinfoArray[0].file" :key="b">
+				<van-cell-group>
+					<van-field  v-model="i.title_image" label="图片标题" readonly  />
+				</van-cell-group>
+				<img class="course-images" :src="i.image" />
+			</div>
 		</div>
+		<!-- <curriculum-evaluation></curriculum-evaluation> -->
 		<button class="buttons">
 			<div v-if="aboutClass==1">
 				<span v-if="status == 3" @click="teacherBtn">查看课程以及可选择老师的列表</span>
@@ -39,7 +45,7 @@
 				culinfoArray: [],
 				status:"",
 				tac:[],
-				aboutClass:""
+				aboutClass:"",
 			}
 		},
 		methods: {

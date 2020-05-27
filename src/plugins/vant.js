@@ -53,3 +53,16 @@ Vue.use(Field);
 //时间选择
 import { DatetimePicker } from 'vant';
 Vue.use(DatetimePicker);
+
+import { Collapse, CollapseItem } from 'vant';
+Vue.use(Collapse);
+Vue.use(CollapseItem);
+
+//图片预览
+import { ImagePreview } from 'vant';
+Vue.use(ImagePreview);
+
+//复选框
+import { Checkbox, CheckboxGroup } from 'vant';
+Vue.use(Checkbox);
+Vue.use(CheckboxGroup);

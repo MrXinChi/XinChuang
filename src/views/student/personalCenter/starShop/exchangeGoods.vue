@@ -1,17 +1,17 @@
 <template>
   <div class="container_">
     <header-nav title="我的兑换"></header-nav>
-    <goods-item @handleGoods="handleGoods" :goodsItem="goodsItem">
+    <goods-item :goodsItem="goodsItem" :goodsItemshow="goodsItemshow">
       <div slot="goods_control" class="goods_control">
         <button class="btn" :class="btnIndex == 1 ? 'active' : ''" @click="handleGeTGoods(1)">线下提货</button>
         <button class="btn" :class="btnIndex == 2 ? 'active' : ''" @click="handleGeTGoods(2)">快递邮寄</button>
       </div>
     </goods-item>
-    <div class="address_wrapper" @click="addressBtn">
-      <div v-if="addressshop">
+    <div class="address_wrapper"  @click="addressBtn">
+      <div v-if="addressshop==true">
         <span>选择收货地址</span>
       </div>
-      <div class="address_info" v-else>
+      <div class="address_info" v-if="addressshop==false">
         <div class="address_info_top">
           <div class="username">{{addressList.name}}</div>
           <div class="phone">{{addressList.tel}}</div>
@@ -20,8 +20,9 @@
       </div>
       <div class="change_address" v-if="addressshops" @click="switchBtn">切换</div>
     </div>
+
     <div class="btn_wrapper">
-      <button class="btn">确认提交</button>
+      <button  @click="footerBtn" class="btn">确认提交</button>
     </div>
   </div>
 </template>
@@ -29,17 +30,21 @@
 
 <script>
 import goodsItem from "../components/goodsItem";
+import toast from "@/utils/toast";
+import { Dialog } from 'vant';
 export default {
   components: {
-    goodsItem
+    goodsItem,
+	  [Dialog.Component.name]: Dialog.Component
   },
   data() {
     return {
       goodsItem: {},
       btnIndex: 1,
-      addressshop: true,
+      addressshop: null,
       addressshops:false,
-      addressList:{}
+      addressList:{},addressId:'',
+      goodsItemshow:false
     };
   },
   created() {
@@ -53,6 +58,7 @@ export default {
       let params = this.getUserData()
       let address = await this.service.personalCenter.getDefaultAddress(params)
       if(address.state == 200){
+          this.addressId = address.data[0].id
           this.addressList = address.data[0]
           this.addressshop = false
           this.addressshops = true
@@ -72,10 +78,8 @@ export default {
           this.addressshop = false
           this.addressshops = true
       }else if(address.state == -1){
-        alert("未添加地址")
         this.$router.push({path:'/deliveryAddress',query:{id:this.id}})
       }
-      console.log(address)
     },
     async getGoodsDetail(id) {
       let result = await this.service.personalCenter.getGoodsDetail({
@@ -88,11 +92,99 @@ export default {
         images: result.data.images
       };
     },
+    async setExchangeBtn(goods_id,type,address_id) {
+      let Exchange = await this.service.personalCenter.exchange({
+        user_id: localStorage.getItem("user_id"),
+        token: localStorage.getItem("token"),
+        goods_id:goods_id,
+        type:type,
+        address_id:address_id
+      });
+      if(Exchange.state == 200){
+      	toast({
+						text: Exchange.msg,
+						time: 1000
+					});
+					this.$router.push('/shopIndex')
+      }else{
+      		toast({
+						text: Exchange.msg,
+						time: 1000
+					});
+      }
+    },
     handleGeTGoods(inx) {
       this.btnIndex = inx;
+      switch(inx){
+        case 1:
+          this.addressshop = 'null'
+          this.addressshops = false
+          break;
+        case 2:
+          this.addressshop = false
+          console.log(this.addressshop)
+
+          break;
+      }
     },
-    handleGoods() {
-      console.log(3333);
+    footerBtn(){  //确认提交
+      if(this.btnIndex == 1){
+        Dialog.confirm({
+          message: '您确认线下提货吗'
+        }).then(() => {
+          // on 确定
+          this.exchangeBtn()
+        }).catch(() => {
+          // on 取消
+        });
+      }
+    
+      if(this.btnIndex == 2){
+        Dialog.confirm({
+          message: '您确认快递邮寄吗'
+        }).then(() => {
+          if(this.addressId != ''){
+            this.setExchangeBtn(this.$route.params.id,String(this.btnIndex),this.addressId)
+          }else{
+            toast({
+              text: '请添加地址',
+              time: 1000
+            });
+            return
+          }
+          this.exchangeBtn()
+        }).catch(() => {
+          // on 取消
+        });
+      }
+    },
+    async exchangeBtn(){
+       let params={}
+      if(this.btnIndex==1){
+        params = {
+          ...getUserData(),
+          goods_id:this.$route.params.id,
+          type:this.btnIndex,
+        }
+      }
+      if(this.btnIndex==2){
+        params = {
+          ...getUserData(),
+          goods_id:this.$route.params.id,
+          type:this.btnIndex,
+          address_id: this.addressId 
+        }
+      }
+      let init =  await this.service.personalCenter.exchange(params)
+      if(init.state==200){
+        Dialog.alert({
+          message:init.msg ,
+        })
+      }else{
+        Dialog.alert({
+          message:init.msg ,
+        })
+      }
     }
   }
 };

@@ -1,12 +1,12 @@
 <template>
 	<swiper :options="swiperOption" ref="mySwiper">
 		<!-- slides -->
-		<swiper-slide v-for="(i,index) in 6" :key="index">
+		<swiper-slide v-for="(i,index) in navArray" :key="index">
 			<div class="slide">
 				<div class="slide-img flex flex_x_center">
-					<img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1048058136,3613031086&fm=26&gp=0.jpg" />
+					<img :src="i.images" />
 				</div>
-				<div class="c_20 fs14 flex flex_x_center">1111</div>
+				<div class="c_20 fs14 flex flex_x_center">{{i.name}}</div>
 			</div>
 		</swiper-slide>
 		<div class="swiper-pagination" slot="pagination"></div>

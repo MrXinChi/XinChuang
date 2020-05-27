@@ -4,7 +4,10 @@
       <img class="set_up" src="@/assets/personalCenter/icon_set_up.png" @click="handleToSetting" />
       <div class="user">
         <img :src="userInfo.avatar" class="avatar" @click="handleToPersonalCenterInfo" />
-        <div class="username">{{userInfo.userName}}</div>
+        <div>
+          <div class="username">{{userInfo.userName}}</div>
+          <div class="username">{{musicTea}}</div>
+        </div>
       </div>
       <div class="list">
         <div class="item" >
@@ -81,7 +84,7 @@ export default {
         },
          {
           img: require("@/assets/student/personalCenter/icon_list_5.png"),
-          title: "批改作业",
+          title: "我的作业",
           isBorder: false
         },
         {
@@ -93,9 +96,15 @@ export default {
           img: require("@/assets/personalCenter/icon_list_8.png"),
           title: "设置",
           isBorder: true
-        }
+        },
+        {
+          img: require("@/assets/personalCenter/icon_list_8.png"),
+          title: "常用语设置",
+          isBorder: true
+        },
       ],
-      sum:0
+      sum:0,
+      musicTea:""
     };
   },
   
@@ -108,11 +117,12 @@ export default {
       this.userInfo.userName = userInfoData.data.name;
     },
     async alreadyBtn(){
-      let userInfoData = await this.service.personalCenter.Already(
+      let already = await this.service.personalCenter.Already(
         getUserData()
       )
       if(already.state==200){
         this.sum=already.data.sum
+       
       }
     },
     // 跳转个人信息
@@ -128,7 +138,7 @@ export default {
           this.$router.push("/userInfo");
           break;
         case 2:
-          this.$router.push("/shareIndex");
+          this.$router.push("/shareIndexxs");
           break;
         case 3:
           this.$router.push("/myCourse");
@@ -143,13 +153,16 @@ export default {
           this.$router.push("/myStudent");
           break;
         case 7:
-          this.$router.push("/homeworkCorrecting");
+          this.$router.push("/homeworkCorrectingT");
           break; 
         case 8:
           this.$router.push("/helpCenter");
           break;
         case 9:
           this.$router.push("/securitySetting");
+          break;
+        case 10:
+          this.$router.push("/managementPhrases");
           break;
         // case "classHour":
         //   this.$router.push("/myClassHour");
@@ -161,11 +174,17 @@ export default {
     },
     handleToSetting() {
       this.$router.push("/securitySetting");
+    },
+    async scoreBtn(){
+      let init = await this.service.personalCenter.score({...getUserData()})
+      this.userInfo.scores = init.data
     }
   },
   created() {
     this.getData();
-    this.alreadyBtn()
+    this.alreadyBtn();
+    this.scoreBtn();
+    this.musicTea=localStorage.getItem('music')
   },
 };
 </script>

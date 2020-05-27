@@ -33,7 +33,7 @@
 		data() {
 			return {
                 teacherlist:[
-                    {name:"所学课程",id:1},
+                    {name:"所有课程",id:1},
                     {name:"作业管理",id:2}
                 ],
                 teacherDetails:{}

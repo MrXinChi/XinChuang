@@ -1,8 +1,8 @@
 <template>
 	<swiper :options="swiperOption" ref="mySwiper">
 		<!-- slides -->
-		<swiper-slide v-for="(i,index) in navArray" :key="index">
-			<div class="slide">
+		<swiper-slide v-for="(i,index) in navArray" :key="index" >
+			<div class="slide" @click="navBtn(i.id,i.name,index)">
 				<div class="slide-img flex flex_x_center">
 					<img :src="i.images" />
 				</div>
@@ -39,6 +39,11 @@
 		computed: {
 			swiper() {
 				return this.$refs.mySwiper.swiper
+			}
+		},
+		methods:{
+			navBtn(id,name,index){
+				this.$emit('navBtn',{id:id,name:name,index:index})
 			}
 		},
 		mounted() {

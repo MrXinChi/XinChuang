@@ -43,17 +43,24 @@ export default {
       ]
     };
   },
-  created() {},
   mounted() {
     this.$refs.video.playerOptions.sources[0].src =
       "http://tu.yyzxh.com/video/f756f201909111009512491.MP4";
   },
   methods: {
     toDetails() {
-      console.log(3333);
       this.$router.push('/helpCenterDetail')
+    },
+    async helpBtn(){
+      let init = await this.service.personalCenter.help()
+      console.log(init)
     }
-  }
+
+  },
+  created() {
+    console.log("444")
+    this.helpBtn()
+  },
 };
 </script>
 

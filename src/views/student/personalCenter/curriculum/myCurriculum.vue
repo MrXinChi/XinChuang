@@ -27,11 +27,10 @@
 		},
 		methods: {
 			async getEndculum() {
-				let Endculum = await this.service.task.getEndculum({
+				let Endculum = await this.service.personalCenter.user_culum({
 					user_id: localStorage.getItem("user_id"),
 					token: localStorage.getItem("token")
 				});
-				console.log("作业列表", Endculum.data);
 				this.couresArray = Endculum.data
 				if(this.couresArray.length == 0){
 					this.taskShow = false
@@ -43,8 +42,23 @@
 				this.$router.push('/student/submitHomework')
 				
 			},
-			detailsBtn(){
-				this.$router.push('/student/submitHomeworks')
+			detailsBtn(index){
+				switch(index.index){
+					case '1':
+						let aboutClass = 1
+						this.$router.push(`/courseDetails/${index.id}/${index.status}/${aboutClass}`);
+						break;
+					case '2':
+						globalWebView("initRoom",VJsonStringify({
+							...getPersonalData(),
+							image: index.image,
+							id: index.id
+						}));
+						break;
+					case '3':
+						this.$router.push(`/curriculumEvaluation/${index.id}`)
+						break;
+				}
 			}
 		},
 		created() {

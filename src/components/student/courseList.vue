@@ -2,13 +2,14 @@
 	<div class="course-item">
 		<div @click="onClick" v-for="(i,index) in couresArray" :key="index" class="course-padding">
 			<div class="flex course-top">
-				<div class="course-top-left flex_1 fs15 fw_b">{{i.name}}</div>
+				<div class="course-top-left flex_1 fs15 fw_b">{{i.music}}</div>
 				<div class="course-top-right fs15">{{i.time}}</div>
 			</div>
-			<div class="course-center fs14 fw_b">帕格尼尼主题狂想</div>
 			<div class="flex course-bottom flex">
-				<div class="course-bottom-left fs14 fw_400 flex_1">课堂分数：30分</div>
-				<div @click="detailsBtn" class="course-bottom-right fs15">{{details}}</div>
+				<div class="course-bottom-left fs14 fw_400 flex_1">课堂分数：{{i.hour}}</div>
+				<div @click="detailsBtn(i.bout_id,i.file,i.status)" class="course-bottom-right fs15" v-if="i.status==1">详情</div>
+				<div @click="detailsBtn(i.bout_id,i.file,i.status)" class="course-bottom-right fs15" v-if="i.status==2">进入课程</div>
+				<div @click="detailsBtn(i.bout_id,i.file,i.status)" class="course-bottom-right fs15" v-if="i.status==3">评价</div>
 			</div>
 		</div>
 	</div>
@@ -24,8 +25,8 @@
 			onClick(){
 				this.$emit('detailsClick')
 			},
-			detailsBtn(){
-				this.$emit('detailsBtn')
+			detailsBtn(id,image,status){
+				this.$emit('detailsBtn',{id:id,image:image,index:status})
 			}
 		}
 	}

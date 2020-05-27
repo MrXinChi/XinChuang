@@ -24,7 +24,7 @@
 		    		<input v-else type="file" accept="audio/*" @input="input" @change="handleFile2" class="hiddenInput" />
 				</label>
 				<div class="video" v-else>
-					<video id="videos" accept="video/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar">
+					<video id="videos" accept="video/*" autoplay webkit-playsinline playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portraint"  loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar">
 						<source :src="userInfo.avatar" type="video/mp4" />
 					</video>
 					<audio id="audios" accept="audio/*" loop="loop" style="z-index: 999;" v-bind:style="{position:position,left:left+'px',top:top+'px'}" :width="width" @click="loopBtn" :src="userInfo.avatar1">
@@ -166,6 +166,7 @@
 			//提交视频  到 后台
 			async getVidsubm1(params) {
 				let Vidsubm = await this.service.about.video(params)
+				console.log(Vidsubm)
 				this.shipin = Vidsubm.tup
 				const that = this
 				that.timer = setInterval(function() {
@@ -216,13 +217,15 @@
 				
 			},
 			async getTask() {   //上传作业
+				console.log(this.shipin)
 				let Task = await this.service.about.getTask({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
-					bout_id: this.valuesid,
 					file: this.shipin,
-					task:1,
 					type:this.typeID,
+					task:2,
+					tac_id:this.valuesid,
+					Minute:this.timemane
 				})
 				if(Task.state==200){
 					this.$refs.refs.show = true

@@ -192,6 +192,7 @@
 			},
 			async getVidsubm1(params) {
 				let Vidsubm = await this.service.about.audio(params)
+				console.log(Vidsubm)
 				this.shipin = Vidsubm.tup
 				const that = this
 				that.timer = setInterval(function() {
@@ -216,13 +217,15 @@
 				
 			},
 			async getTask() {  //提交课程
+				console.log(this.shipin)
 				let Task = await this.service.about.getTask({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
 					file: this.shipin,
 					type:this.typeID,
 					task:2,
-					tac_id:this.valuesid
+					tac_id:this.valuesid,
+					Minute:this.timemane
 				})
 				//成功
 				if(Task.state==200){

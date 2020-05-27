@@ -42,7 +42,7 @@
 				}
 			},
 			currBtn(){
-				if(this.text.length < 15){
+				if(this.text.length < 10){
 					toast({
 						text: '字数不够',
 						time: 1000

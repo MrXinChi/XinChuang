@@ -7,7 +7,9 @@ import ShareDetail from '@/views/teacher/personalCenter/share/shareDetail' // �
 import HelpCenter from '@/views/teacher/personalCenter/helpCenter/helpCenter' // 帮助中心
 import HelpCenterDetail from '@/views/teacher/personalCenter/helpCenter/helpCenterDetail' // 帮助中心详情
 import MyStudent from '@/views/teacher/personalCenter/myStudent/myStudent' // 我的学生
-import MyStudentDetail from '@/views/teacher/personalCenter/myStudent/myStudentDetail' // 我的学生详情
+import MyStudentDetail from '@/views/teacher/personalCenter/myStudent/myStudentDetail' // 我的课程详情
+import MyStudents from '@/views/teacher/personalCenter/myStudent/myStudents' // 我的学生详情
+
 import SchoolTime from '@/views/teacher/personalCenter/schoolTime/index' // 上课时间
 import Feedback from '@/views/teacher/personalCenter/feedback/feedback' // 意见反馈
 import SecuritySetting from '@/views/teacher/personalCenter/securitySetting/securitySetting' // 安全设置
@@ -16,7 +18,8 @@ import Finance from '@/views/teacher/personalCenter/finance/finance' // 财务�
 import MyCourse from '@/views/teacher/personalCenter/myCourse/myCourse' // 课程列表
 import Evaluate from '@/views/teacher/personalCenter/myCourse/evaluate' // 课程评价
 import Details from '@/views/teacher/personalCenter/myCourse/details' // 评价详情
-import HomeworkCorrecting from '@/views/teacher/personalCenter/homeworkCorrecting/homeworkCorrecting' // 批改作业
+import Summary from '@/views/teacher/personalCenter/myCourse/summary' // 课程总结
+import HomeworkCorrectingT from '@/views/teacher/personalCenter/homeworkCorrecting/homeworkCorrecting' // 批改作业
 //teacher---end
 //student--start
 import PersonalCenterInfoStu from '@/views/student/personalCenter/personalCenterInfo/personalCenterInfo' // 个人中心信息
@@ -34,6 +37,8 @@ import ShareDetailStu from '@/views/student/personalCenter/share/shareDetail' //
 import HelpCenterStu from '@/views/student/personalCenter/helpCenter/helpCenter' // 帮助中心
 import HelpCenterDetailStu from '@/views/student/personalCenter/helpCenter/helpCenterDetail' // 帮助中心详情
 import FeedbackStu from '@/views/student/personalCenter/feedback/feedback' // 意见反馈
+import FeedbackListStu from '@/views/student/personalCenter/feedback/feedbackList' // 意见反馈列表
+import FeedbackDetailsStu from '@/views/student/personalCenter/feedback/feedbackDetails' // 意见反馈详情
 import SecuritySettingStu from '@/views/student/personalCenter/securitySetting/securitySetting' // 安全设置
 import ChangePasswordStu from '@/views/student/personalCenter/securitySetting/changePassword' // 修改密码
 import DeliveryAddressStu from '@/views/student/personalCenter/securitySetting/deliveryAddress' // 收货地址
@@ -47,6 +52,8 @@ import SubmitJob from '@/views/student/personalCenter/myTeacher/submitJob/submit
 import BindTeacher from '@/views/student/personalCenter/bindTeacher/bindTeacher' // 老师列表
 import SelectTeachers from '@/views/student/personalCenter/bindTeacher/selectTeachers' // 筛选老师
 import BindTeacherDetails from '@/views/student/personalCenter/bindTeacher/bindTeacherDetails' // 老师详情
+import HomeworkCorrectingS from '@/views/student/personalCenter/homeworkCorrecting/homeworkCorrecting' // 批改作业
+import Photo from '@/views/teacher/classroom/photo' // 批改作业
 
 
 //latelyCurriculum 最近课程
@@ -58,6 +65,11 @@ import MyCurriculum from '@/views/student/personalCenter/curriculum/myCurriculum
 
 export const routes = [
     //teacher=========start
+    {
+        path: '/photo',
+        name: "photo",
+        component: Photo
+    },
     {
         path: '/userInfo',
         name: "userInfo",
@@ -97,10 +109,15 @@ export const routes = [
         name: "myStudent",
         component: MyStudent
     },
-    {
+    {       //课程详情
         path: '/myStudentDetail/:id/:status',
         name: "myStudentDetail",
         component: MyStudentDetail
+    },
+    {       //学生详情
+        path: '/myStudents/:id/:status',
+        name: "myStudents",
+        component: MyStudents
     },
     //我的学生-end
 
@@ -131,6 +148,12 @@ export const routes = [
         name: "myCourse",
         component: MyCourse
     },
+    {
+        path: '/summary',
+        name: "summary",
+        component: Summary
+    },
+    
     {
         path: '/finance',
         name: "finance",
@@ -219,6 +242,17 @@ export const routes = [
         component: FeedbackStu
     },
     {
+        path: '/feedbackListStu',
+        name: "feedbackListStu",
+        component: FeedbackListStu
+    },
+    {
+        path: '/feedbackDetailsStu',
+        name: "feedbackDetailsStu",
+        component: FeedbackDetailsStu
+    },
+    
+    {
         path: '/securitySettingstu',
         name: "securitySettingstu",
         component: SecuritySettingStu
@@ -284,11 +318,15 @@ export const routes = [
         component: BindTeacherDetails
     },
     {
-        path: '/homeworkCorrecting',
-        name: "homeworkCorrecting",
-        component: HomeworkCorrecting
+        path: '/homeworkCorrectingT',
+        name: "homeworkCorrectingT",
+        component: HomeworkCorrectingT
     },
-    
+    {
+        path: '/homeworkCorrectingS',
+        name: "homeworkCorrectingS",
+        component: HomeworkCorrectingS
+    },
     {
         path: '/myCurriculum',
         name: "myCurriculum",

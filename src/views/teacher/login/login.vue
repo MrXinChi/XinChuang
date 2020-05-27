@@ -58,12 +58,15 @@ export default {
       localStorage.setItem("user_id", Deng.data.id);
       localStorage.setItem("token", Deng.data.token);
       localStorage.setItem("name", Deng.data.name);
+      localStorage.setItem("music", Deng.data.music);
       localStorage.setItem("mobile", Deng.data.mobile);
+      localStorage.setItem("sowing", Deng.data.sowing);
       localStorage.setItem("showBottom",0);
       this.$router.push("/dashboard/home");
     },
     loginBtn() {
       this.getDeng();
+      sessionStorage.setItem('tabBarActiveIndex', 0);
     },
 
     glassesBtn() {
@@ -83,7 +86,14 @@ export default {
     setupBtn() {
       this.$router.push("/setup");
     }
-  }
+  },
+  created(){
+			let token = localStorage.getItem('token')
+			if(token!=null){
+				sessionStorage.setItem("tabBarActiveIndex", 0);
+				this.$router.push("/dashboard/homestu");
+			}
+		},
 };
 </script>
 

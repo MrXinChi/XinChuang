@@ -8,7 +8,7 @@
       <van-tab title="申请绑定"></van-tab>
 		</van-tabs>
     <!-- 学生列表 -->
-    <div class="content"  v-for="(i,index) in studentList" :key="index" @click="studentDetails(index)" v-if="type==1">
+    <div class="content"  v-for="(i,index) in studentList" :key="index" @click="studentDetails(index,i.id)" v-if="type==1">
       <div class="item_list">
         <div class="item_left">
           <img :src="i.images" class="avatar" />
@@ -21,7 +21,6 @@
               <van-icon class="right_icon" size="30" name="arrow" />
             </p> 
           </div>
-        
         </div>
       </div>
     </div>
@@ -87,6 +86,9 @@
 					<button class="van-button van-button--default van-button--large van-dialog__cancel" @click="qxbackSubmit">
 						<span class="van-button__text" >取消</span>
 					</button>
+          <button class="van-button van-button--default van-button--large van-dialog__cancel" @click="jujuebackSubmit">
+						<span class="van-button__text" >拒绝</span>
+					</button>
 					<button class="van-button van-button--default van-button--large van-dialog__confirm van-hairline--left" @click="qdbackSubmit">
 						<span class="van-button__text" >确认</span>
 					</button>
@@ -112,9 +114,15 @@ export default {
     };
   },
   methods: {
-    studentDetails(){   //学生详情
-    // let status = 1
-    //   this.$router.push(`/myStudentDetail/${index}/${status}`)
+    studentDetails(index,id){   //学生详情
+    this.studentList.map(i=>{
+      if(i.id == id){
+        localStorage.setItem("studentDetails",JSON.stringify(i))
+      }
+    })
+      let status = 1
+      this.$router.push(`/myStudents/${index}/${status}`)
+      
     },
     toDetails(id) { //老师详情
       let status = 2
@@ -126,6 +134,8 @@ export default {
         this.taskBtn()
       }else if(this.type==3){
         this.applyBtn()
+      }else if(this.type==1){
+        this.studentBtn()
       }
     },
     async studentBtn(){   //学生列表
@@ -171,10 +181,13 @@ export default {
       }
     },
     examineBtn(id){       //是否确认绑定
-    this.id = id
+      this.id = id
       this.van_dialog = true
     },
     qxbackSubmit(){     //取消绑定
+      this.van_dialog = false
+    },
+    jujuebackSubmit(){
       this.van_dialog = false
       this.type = 2
       this.examineBtns()

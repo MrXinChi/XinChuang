@@ -3,6 +3,9 @@
     <header-nav title="意见反馈">
       <div slot="right" class="header_right" @click="handleToOrderOfExchange">反馈列表</div>
     </header-nav>
+    <van-cell-group>
+      <van-field v-model="value" placeholder="请输入反馈列表" />
+    </van-cell-group>
     <div class="textframe">
       <div class="textframe-title">您的宝贵意见，将是我们成功的基础，每句话都是 我们进步的最大动力</div>
       <div class="textframe-textarea">
@@ -29,42 +32,52 @@ export default {
   data() {
     return {
       contentCount: 500,
-      feedbackContent: ""
+      feedbackContent: "",  //反馈内容
+      value:"" ,    //反馈标题
     };
   },
   methods: {
     handleToOrderOfExchange(){    //跳转反馈列表
-      this.$router.push('/feedbackList')
+      this.$router.push('/feedbackListStu')
     },
-  	async setFeedback(text) {
+  	async setFeedback(text,title) {
       let Feedback = await this.service.personalCenter.setFeedback({
         user_id: localStorage.getItem("user_id"),
         token: localStorage.getItem("token"),
-        text:text
+        text:text,
+        title:title
       });
-      console.log("用戶反馈", Feedback);
       if(Feedback.state == 200){
       	toast({
 						text: '反馈成功',
 						time: 1000
-					});
-      	this.$router.push('/dashboard/personalCenterstu')
+          });
+      	// this.$router.push('/dashboard/personalCenterstu')
       }else{
       	toast({
 						text: '反馈失败',
 						time: 1000
-					});
+          });
       }
+      this.feedbackContent = ""
+      this.value = ""
     },
     footerBtn(){
     	if(this.feedbackContent <= 0){
     		toast({
-						text: '反馈不能为空',
+						text: '反馈内容不能为空',
 						time: 1000
 					});
     		return
-    	}
-    	this.setFeedback(this.feedbackContent)
+      }
+      if(this.value <= 0){
+    		toast({
+						text: '反馈标题不能为空',
+						time: 1000
+					});
+    		return
+      }
+    	this.setFeedback(this.feedbackContent,this.value)
     },
     changeConent() {
       this.contentCount = 500 - this.feedbackContent.length;
@@ -77,6 +90,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/deep/.van-cell-group{
+  margin:10px 0 0 0;
+}
 .container_ {
   width: 100%;
   min-height: 100%;

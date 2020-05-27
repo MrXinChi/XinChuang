@@ -4,20 +4,23 @@
       <div slot="right" class="header_right" @click="handleToShareDetail"></div>
     </header-nav>
     <div class="top_wrapper">
-      <div class="score_wrapper">
-        <button class="score_btn">3000积分</button>
-        <div class="score_title">我获得的积分</div>
-      </div>
+      
     </div>
-    <div class="share_wrapper">
+    <div v-if="shareShow" class="share_wrapper">
       <div class="share_title">我邀请的</div>
       <div class="share_list">
-        <div class="share_item" v-for="(item,index) in 6" :key="index">
-          <div class="item_left">1 外星人</div>
-          <div class="item_right">2019-09-09</div>
+        <div class="share_item" v-for="(i,index) in share" :key="index">
+          <div class="item_left">{{i.userName}}</div>
+          <div class="item_right">{{i.additme}}</div>
         </div>
       </div>
     </div>
+	<div v-else class="empty">
+		<div class="empty-img flex flex_x_center">
+			<img src="@/assets/student/about/empty.png" />
+		</div>
+		<div class="empty-title fs13 flex flex_x_center">您暂时还未邀请到好友</div>
+	</div>
   </div>
 </template>
 
@@ -25,13 +28,33 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+    	share:[],
+		shareShow:true
+    };
   },
   created() {},
   methods: {
+  	async setInvitation() {
+      let Invitation = await this.service.personalCenter.setInvitation({
+        user_id: localStorage.getItem("user_id"),
+        token: localStorage.getItem("token")
+      });
+      this.share  = Invitation.data
+	  if(Invitation.data.length == 0){
+		  this.shareShow = false
+	  }else{
+		  this.shareShow = true
+	  }
+    },
+//	
+  	
     handleToShareDetail() {
       this.$router.push("/shareDetailxs");
     }
+  },
+  created(){
+  	this.setInvitation()
   }
 };
 </script>
@@ -89,4 +112,28 @@ export default {
     }
   }
 }
+.empty {
+			width: 100%;
+			padding-top: 50px;
+			box-sizing: border-box;
+			.empty-img {
+				img {
+					width: 125px;
+					height: 111px;
+				}
+			}
+			.empty-title {
+				color: #5e5e5e;
+				margin-top: 20px;
+			}
+			.empty-btn {
+				margin-top: 20px;
+				button {
+					width: 92px;
+					height: 30px;
+					background: rgba(62, 112, 147, 1);
+					border-radius: 1px;
+				}
+			}
+		}
 </style>

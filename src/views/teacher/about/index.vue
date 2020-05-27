@@ -3,14 +3,15 @@
 		<header-nav :returnShow='false' :returnShop="false" title="抢单大厅"></header-nav>
 		
 		<div class="kecheng">
-			<div  @click="kechengBtn(i.id)" v-for="i in CourseListArray" class="kecheng-item">
+			<div v-for="(i,index) in CourseListArray" :key="index" class="kecheng-item">
 				<div class="kecheng-item-t flex flex_y_center flex_x_bten">
 					<div class="kecheng-item-c fs14 fw_b">{{i.music}}</div>
 					<div class="kecheng-item-t-r fs15">{{i.time}}</div>
 				</div>
 				<div class="kecheng-item-b flex flex_x_bten">
 					<div class="kecheng-item-b-l fs14">课堂分数：{{i.hour}}分</div>
-					<div class="kecheng-item-b-r fs15">抢单</div>
+					<div class="kecheng-item-b-r fs15" v-if="i.state==1" @click="kechengBtn(i.id)">抢单</div>
+					<div class="kecheng-item-b-r fs15" v-if="i.state==2" >已抢</div>
 				</div>
 			</div>
 			<div v-if='false' class="empty">

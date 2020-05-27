@@ -68,6 +68,13 @@ $http.interceptors.response.use(function (res) {
         router.push('/loginstuter')
         window.localStorage.clear();
     }
+    // else if(code == 10003){
+    //     toast({
+    //         text: '请先登录',
+    //         time: 1000
+    //     });
+    //     router.push('/loginstuter')
+    // }
      return res.data;
  }, function (error) {
      var str = error.message;

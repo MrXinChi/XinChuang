@@ -30,8 +30,11 @@
 			<div v-else></div>
 			<div class="img fs16 fw_b">
 				<div class="img-name">请上传曲谱图片</div>
+				<van-cell-group>
+					<van-field v-for="(i,b) in this.file" :key="b " v-model="i.name" label="图片标题" placeholder="请输入" @blur="aa(i.name)" />
+				</van-cell-group>
 				<div class="img-lile">
-					<van-uploader :after-read="afterRead" v-model="fileList" multiple :max-count="1" />
+					<van-uploader :after-read="afterRead" :before-delete="beforeDelete" v-model="fileList" multiple :max-count="9" />
 				</div>
 			</div>
 			<div class="detail">
@@ -100,17 +103,21 @@
 				time:'',
 				shijian:'',
 				hour:'',
-				file:''	,
+				file:[]	,
 				boutaddState:'',
 				imgs:null,
 				timeindex:1,
 				shijianArray:[],
 				shijianShow:false,
 				aboutClass:"",  //约课状态
-				teacherId:''	//老师id
+				teacherId:'',	//老师id
+				musicId:"",      //乐器
 			}
 		},
 		methods: {
+			aa(name){
+				console.log(this.file)
+			},
 			qxbackSubmit(){		//预约的提示状态  取消
 				this.van_dialog = false
 			},
@@ -131,6 +138,11 @@
 				this.musicArray = Bout.data.music
 				this.hourArray = Bout.data.hour
 				this.timeArray = Bout.data.time
+				// this.musicArray.map(i=>{
+				// 	if(i.id==this.musicId){
+				// 		console.log(i)
+				// 	}
+				// })
 			},
 			async TeacherBtn() {	//教师约课信息
 				let Bout = await this.service.about.tac_bout({
@@ -143,10 +155,7 @@
 				this.hourArray = Bout.data.hour
 				this.timeArray = Bout.data.time
 			},
-			async getImgsubm(params) {
-				let Imgsubm = await this.service.about.getImgsubm(params)
-				this.file = Imgsubm.tup
-			},
+			
 			//学生约课
 			async getBoutadd() {
 				let Boutadd = await this.service.about.getBoutadd({
@@ -161,8 +170,8 @@
 				this.boutaddState = Boutadd.state
 				if(Boutadd.state==200){
 					this.title1 = '恭喜您！'
-					this.title2 = '购买成功'
-					this.title3 = '请开课三分钟前进入教室'
+					this.title2 = '约课成功'
+					this.title3 = '待后台审核通过后，进入课程选择老师'
 					this.btn = '返回首页'
 					this.imgs = cg
 					this.$refs.refs.show = true
@@ -214,13 +223,37 @@
 					this.$refs.refs.show = true
 				}
 			},
-			afterRead(file) {
-				let files  = this.fileList[0].file
-				let param = new FormData()
-				param.append('file',files)
-				param.append("user_id",localStorage.getItem('user_id'))
-				param.append('token',localStorage.getItem('token'))
-				this.getImgsubm(param)
+			beforeDelete(file){
+				this.fileList.map(i=>{
+					if(i.file.lastModified == file.file.lastModified){
+						this.fileList.splice(i,1)
+					}
+				})
+				if(this.fileList.length==0){
+					this.file = []
+				}else{
+					this.fileList.map(i=>{
+						let param = new FormData()
+						param.append('file',i.file)
+						param.append("user_id",localStorage.getItem('user_id'))
+						param.append('token',localStorage.getItem('token'))
+						this.getImgsubm(param)
+					})
+				}
+			},
+			 afterRead(file) {
+				this.fileList.map(i=>{
+					let param = new FormData()
+					param.append('file',i.file)
+					param.append("user_id",localStorage.getItem('user_id'))
+					param.append('token',localStorage.getItem('token'))
+					this.getImgsubm(param)
+				})
+			},
+			async getImgsubm(params) {
+				this.file = []
+				let Imgsubm = await this.service.about.getImgsubm(params)
+				this.file.push({img:Imgsubm.tup,name:""})
 			},
 			ageBtn(index) {
 				this.ageNum = index
@@ -304,6 +337,7 @@
 			}
 			this.aboutClass = this.$route.query.aboutClass
 			this.teacherId = this.$route.query.teacherId
+			this.styleNum = this.$route.query.musicindex
 			if(this.aboutClass==2){
 				this.TeacherBtn()
 			}else{
@@ -333,7 +367,9 @@
 	.content {
 		padding-bottom: 80px;
 	}
-	
+	/deep/.van-cell-group{
+		margin-top:20px;
+	}
 	.detail {
 		padding: 0 15px;
 		.age-name {

@@ -95,6 +95,11 @@
 				if(init.state==200){
 					this.van_dialog= true
 					this.msg = init.msg
+				}else{
+					toast({
+						text:init.msg ,
+						time: 1000
+					})
 				}
 			},
 			qxbackSubmit(){     //取消绑定

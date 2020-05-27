@@ -20,7 +20,7 @@ window.getUserData = Vue.prototype.getUserData = function () { // 获取用户�
 			user_id: localStorage.getItem('user_id'),
 			token: localStorage.getItem('token')
 		};
-	} catch (e) {}
+	} catch (e) {}                                                                                                   
 	return null;
 }
 
@@ -30,6 +30,7 @@ window.getPersonalData = Vue.prototype.getPersonalData = function () {
 		return {
 			userId: localStorage.getItem('user_id'),
 			token: localStorage.getItem('token'),
+			sowing: localStorage.getItem('sowing'),
 			type: localStorage.getItem("showBottom"),
 			phone: localStorage.getItem("mobile"),
 		};

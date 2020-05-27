@@ -150,7 +150,7 @@ export default {
       show: null,
       status: "111",
       OlLi:[
-        {name:"试听课",id:1},
+        {name:"约课",id:1},
         {name:"我的老师",id:2}
       ],
       shop:true,
@@ -208,6 +208,7 @@ export default {
       }
     },
     makeBtn() {       //我要约课
+    // this.$router.push({path:"/statusDetails",query:{id:2}})
       this.$router.push({path:"/detailsPage",query:{aboutClass:this.aboutClass,teacherId:this.teacherId}});
     },
     qdbackSubmit(){  //确定并去登陆 
@@ -222,8 +223,8 @@ export default {
         type: this.type
       });
       this.boutaddState = Culum.state
-      if(Culum.state!=200){
-        this.Msg = Culum.msg
+      if(Culum.state==10003){
+        this.Msg = '请先登录'
         this.vanPopup = true
         return
       }

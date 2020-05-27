@@ -7,6 +7,8 @@ import DirectSeedingRoom from '@/views/student/about/child/directSeedingRoom'
 import DetailsPageTeacher from '@/views/teacher/about/detailsPageTeacher'
 import TeacherList from '@/views/student/about/child/teacherList'
 import Evaluate from '@/views/student/about/child/evaluate'
+import StatusDetails from '@/views/student/about/child/statusDetails'
+
 
 export const routes = [
 		{
@@ -48,7 +50,13 @@ export const routes = [
 			path: '/evaluate',
 			name: "evaluate",
 			component: Evaluate
-		}
+		},
+		{
+			path: '/statusDetails',
+			name: "statusDetails",
+			component: StatusDetails
+		},
+		
 ];
 
 export default routes;

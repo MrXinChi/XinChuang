@@ -8,6 +8,7 @@ import login from '@/router/login'
 import about from '@/router/about'
 import task from '@/router/task'
 import personalCenter from '@/router/personalCenter'
+import dialogue from '@/router/dialogue'
 
 //引入tabs
 import Dashboard from '@/views/teacher/Dashboard/index'
@@ -35,7 +36,8 @@ var router = new VueRouter({
 		...about,
 		...task,
 		...personalCenter,
-		...audition
+		...audition,
+		...dialogue
 	]
 })
 

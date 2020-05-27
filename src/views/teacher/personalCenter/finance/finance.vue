@@ -62,9 +62,9 @@ export default {
 				month = "0"+ month
 			}
 			if(this.type==1){
-				 this.star = year+'/'+month
+				 this.star = year+'-'+month
 			}else{
-				this.end = year+'/'+month
+				this.end = year+'-'+month
 			}
 			 this.show = false
 		},

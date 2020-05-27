@@ -45,12 +45,10 @@ import toast from "@/utils/toast";
 			onTime(){
 				this.$router.push("/detailsPageTeacher");
 			},
-			makeBtn(){
-				
-			},
-			async deleteItem(index){
+			async deleteItem(id){
 				let init = await this.service.personalCenter.tactime_del({
-					id:index
+					...getUserData(),
+					id:id,
 				})
 				if(init.state==200){
 					toast({

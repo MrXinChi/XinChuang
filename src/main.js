@@ -6,6 +6,11 @@ import store from './store'
 import RouteTransition from 'vue-route-transition'
 Vue.use(RouteTransition)
 
+import VueTouch from 'vue-touch'
+Vue.use(VueTouch, {name: 'v-touch'})
+VueTouch.config.swipe = {
+  threshold: 100 //手指左右滑动距离
+}
 
 
 //全局组件

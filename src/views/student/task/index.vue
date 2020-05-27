@@ -69,7 +69,7 @@
 		},
 		methods: {
 			qdbackSubmit(){  //确定并去登陆 
-				this.$router.push('/loginstuter')
+			this.$router.push('/loginstuter')
 			},
 			onClick(name, title) {
 				this.type=name+1
@@ -83,14 +83,12 @@
 				});
 				if(Endculum.state==200){
 					this.couresArray = Endculum.data
-					if(this.couresArray.length == 0){
-						this.taskShow = false
-					}else{
-						this.taskShow = true
-					}
-				}else{
+					this.taskShow = true
+				}else if(Endculum.state==10003){
 					this.vanPopup = true
-					this.Msg = Endculum.msg
+					this.Msg = '请先登录'
+				}else{
+					this.taskShow = false
 				}
 			},
 			makeBtn() {

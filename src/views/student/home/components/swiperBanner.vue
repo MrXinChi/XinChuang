@@ -15,7 +15,7 @@
 		},
 		methods:{
 			bannerBtn(){
-				// this.$router.push('/audition')
+				this.$router.push('/dialogue')
 			}
 		}
 	}

@@ -9,18 +9,39 @@
         @click="handleTab"
       >
         <van-tab title="全部"></van-tab>
-        <van-tab title="待发货"></van-tab>
         <van-tab title="待收货"></van-tab>
+        <van-tab title="待发货"></van-tab>
         <van-tab title="已完成"></van-tab>
       </van-tabs>
     </div>
     <div class="order_list">
-      <goods-item @handleGoods="handleGoods">
-        <div slot="goods_control" class="goods_control">
-          <div class="goods_type">已完成</div>
-          <button class="goods_btn" @click.stop>再来一单</button>
+      <div class="goods flex flex_warp"  >
+        <div v-for="(i,b) in goodsItem" :key="b" @click="handleGoods" style="width:47%; background: #ffffff;margin:5px;padding:10px 0;"> 
+          <img :src="i.image" />
+          <div class="goods_details">
+            <div class="goods_top">
+              <div class="goods_title">{{i.name}}</div>
+              <div class="goods_count">X1</div>
+            </div>
+            <div class="goods_star_count">{{i.price}}星星</div>
+            <slot name="goods_control"></slot>
+          </div>
+          <div slot="goods_control" class="goods_control">
+            <div class="goods_type" v-if="i.state==1">待收货</div>
+            <div class="goods_type" v-if="i.state==2">待发货</div>
+            <div class="goods_type" v-if="i.state==3">已完成</div>
+            <button class="goods_btn" @click.stop="comeAgain">再来一单</button>
+          </div>
         </div>
-      </goods-item>
+      </div>
+      <!-- <goods-item @handleGoods="handleGoods" :goodsItem="goodsItem" :goodsItemshow="goodsItemshow"> -->
+        <!-- <div slot="goods_control" class="goods_control">
+          <div class="goods_type" v-if="status==1">待收货</div>
+          <div class="goods_type" v-if="status==2">待发货</div>
+          <div class="goods_type" v-if="status==3">已完成</div>
+          <button class="goods_btn" @click.stop>再来一单</button>
+        </div> -->
+      <!-- </goods-item> -->
     </div>
   </div>
 </template>
@@ -33,21 +54,67 @@ export default {
     goodsItem
   },
   data() {
-    return {};
+    return {
+      goodsItem:[],
+      goodsItemshow:true,
+      type:0
+    };
   },
   methods: {
     handleTab(index, name) {
-      console.log(index, name);
+      this.type = index
+      this.user_exchangeBtn()
     },
     // 跳转订单详情
     handleGoods() {
       this.$router.push("/orderOfExchangeDetail");
+    },
+    async user_exchangeBtn(){
+      let init = await this.service.personalCenter.user_exchange({ ...getUserData(),type:this.type})
+      if(init.state == 200){
+        this.goodsItem = init.data
+      }
+    },
+    comeAgain(){
+      this.$router.push('/shopIndex')
     }
+  },
+  created(){
+    this.user_exchangeBtn()
   }
 };
 </script>
 
 <style scoped lang="scss">
+.goods {
+  margin-top: 10px;
+  padding: 10px;
+  img {
+    width: 130px;
+    height: 90px;
+    margin:0 auto;
+  }
+  .goods_details {
+    padding: 0 15px;
+    // height: 90px;
+    .goods_top {
+      @include flex-center(row);
+      margin-top: 10px;
+      .goods_title {
+        @include flex-center();
+        @include text-overflow();
+        @include word(16, #23252f);
+      }
+      .goods_count {
+        @include word(15, #23252f);
+      }
+    }
+    .goods_star_count {
+      @include word(15, #666666);
+      margin-top: 16px;
+    }
+  }
+}
 .container_ {
   width: 100%;
   min-height: 100%;
@@ -61,7 +128,7 @@ export default {
   .order_list {
     padding-top: 45px;
     .goods_control {
-      @include flex-center(row, space-between, flex-end);
+      @include flex-center(row, space-around, flex-end);
       .goods_type {
         @include word(14, #f29417);
       }

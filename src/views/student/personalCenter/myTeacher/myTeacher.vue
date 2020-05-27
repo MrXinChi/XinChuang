@@ -43,6 +43,12 @@
 			}
 		},
 		methods: {
+			onSwipeLeft(){
+				
+			},
+			onSwipeRight(){
+
+			},
           	swiperBtn(id,index){ 
 				this.SwiperactiveNum = index
 				 this.initBtn( id)
@@ -116,7 +122,8 @@
 				.teacherlist_li_left{
 					width:20%;
 					img{
-						width:100%;
+						width:60px;
+						height:60px;
 						border-radius: 50%;
 					}
 				}

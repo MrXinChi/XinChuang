@@ -59,8 +59,8 @@ export default {
         field:'',
         hobby:'',
         avatar:"https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg"
-
-      } 
+      },
+      fileImage:""
     };
   },
   methods: {
@@ -68,24 +68,68 @@ export default {
 				let Resume = await this.service.personalCenter.getResume({
 					user_id: localStorage.getItem("user_id"),
 					token: localStorage.getItem("token")
-				});
-				console.log("个人信息", Resume.data);
+        });
+        if(Resume.state == 200){
+          this.userInfo.name = Resume.data.name
+          this.userInfo.age = Resume.data.age
+          this.userInfo.school = Resume.data.school
+          this.userInfo.field = Resume.data.field
+          this.userInfo.hobby = Resume.data.hobby
+          this.userInfo.avatar = Resume.data.images
+        }
 			},
   	
-  	setResume(){
-  		
+  	async setResume(){
+  		let params = {
+        ...getUserData(),
+        name:this.userInfo.name,
+        age:this.userInfo.age,
+        school:this.userInfo.school,
+        field:this.userInfo.field,
+        hobby:this.userInfo.hobby,
+        file:this.fileImage
+      }
+      let init = await this.service.personalCenter.setResume(params)
+      toast({
+        text: init.msg,
+        time: 1000
+      })
+      if(init.state==200){
+        this.$router.push('/dashboard/personalCenter')
+      }
   	},
     // 将头像显示
-    handleFile: function(e) {
-      let $target = e.target || e.srcElement;
-      let file = $target.files[0];
-      var reader = new FileReader();
-      reader.onload = data => {
-        let res = data.target || data.srcElement;
-        this.userInfo.avatar = res.result;
-      };
-      reader.readAsDataURL(file);
-    },
+			handleFile: function(e) {
+				let $target = e.target || e.srcElement
+				let file = $target.files[0]
+				let param = new FormData()
+				this.fileImage = param.append('file', file)
+				param.append("user_id", localStorage.getItem('user_id'))
+				param.append('token', localStorage.getItem('token'))
+        this.getImgsubm(param)
+				var reader = new FileReader()
+				reader.onload = (data) => {
+					let res = data.target || data.srcElement
+					this.userInfo.avatar = res.result
+				}
+				reader.readAsDataURL(file)
+      },
+      async getImgsubm(params) {  //修改头像
+				let Imgsubm = await this.service.about.getImgsubm(params)
+				this.Imgsubm = Imgsubm.tup
+				this.getUserEdit(this.Imgsubm)
+      },
+      async getUserEdit(file) { //修改头像
+				let UserEdit = await this.service.personalCenter.getUserEdit({
+					user_id: localStorage.getItem('user_id'),
+					token: localStorage.getItem('token'),
+					file: file
+        })
+        toast({
+          text: UserEdit.msg,
+          time: 1000
+        })
+			},
   },
   created() {
   	this.getResume()

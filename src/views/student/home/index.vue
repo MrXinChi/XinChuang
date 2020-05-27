@@ -7,7 +7,7 @@
     </div>
 
     <div class="swiper-nav">
-      <swiper-nav :navArray="navArray"></swiper-nav>
+      <swiper-nav :navArray="navArray" @navBtn="navBtn"></swiper-nav>
     </div>
     <skeleton :height="10" background="#FAFAFA"></skeleton>
     <!--<div class="remen flex flex_y_center">
@@ -28,19 +28,20 @@
               src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3271928043,1151506304&fm=26&gp=0.jpg"
             />
           </div>
-          <div class="content-center flex_1">
+          <div class="content-center flex_1" >
             <div class="content-center-tit1 fs16 fw_b over_1">{{i.music}}</div>
             <div class="content-center-tit2 fs13 fw_b">正在为您安排老师</div>
-            <div
-              @click="enterClassroomBtn(i.images,i.id)"
-              class="content-center-tit3 fs15 flex flex_y_center"
-            >
+            <!-- <div class="content-center-tit3 fs15 flex flex_y_center">
+              进入教室
+              <van-icon name="arrow" />
+            </div> -->
+          </div>
+          <div class="content-right"  @click="enterClassroomBtn(i.images,i.id)">
+            <!-- <button class="c_fff fs14">上传乐谱</button> -->
+            <div class="content-center-tit3 fs20 flex flex_y_center">
               进入教室
               <van-icon name="arrow" />
             </div>
-          </div>
-          <div class="content-right">
-            <button class="c_fff fs14">上传乐谱</button>
           </div>
         </div>
       </div>
@@ -50,7 +51,7 @@
       <div>
         <div class="flex Consultation-header flex_y_center">
           <img class="header-left" src="../../../assets/student/home/gonggao.png" />
-          <div class="header-center fs17 fw_b c_666">最新咨询</div>
+          <div class="header-center fs17 fw_b c_666">最新资讯</div>
           <div class="header-right flex_1 flex flex_x_right fs12 c_666">
           	
           	<router-link to='/allConsultation'>更多<van-icon name="arrow" /></router-link>
@@ -132,6 +133,13 @@ export default {
     };
   },
   methods: {
+    navBtn(index){
+      console.log(index.index)
+      let aboutClass = 1 
+      let teacherId = 0
+      let musicindex = index.index
+      this.$router.push({path:'/detailsPage',query:{aboutClass,teacherId,musicindex}})
+    },
     //轮播图
     async getBanner() {
       let Banner = await this.service.home.getBanner({
@@ -191,21 +199,23 @@ export default {
     returnBtn() {
       alert("1");
     },
-    rmation(index) {
-      console.log(index);
+    rmation(index) {  //咨询详情
       this.$router.push(`/rmationDetails/${index}`);
       //  	/article/${id}
     },
     enterClassroomBtn(img, id) {
-    	console.log(img,id)
-       globalWebView(
-          "initRoom",
-          VJsonStringify({
-            ...getPersonalData(),
-            image: img,
-            id: id
-          })
-        );
+      // console.log({
+      //   ...getPersonalData(),
+      //   image: img,
+      //   id: id
+      // })
+      // this.$router.push({path:'/picture',query:{id:id}})
+      globalWebView("initRoom",VJsonStringify({
+        ...getPersonalData(),
+        image: img,
+        id: id
+      }));
+      
     }
   },
   mounted() {
@@ -357,10 +367,7 @@ export default {
           color: #5e5e5e;
           margin-top: 15px;
         }
-        .content-center-tit3 {
-          color: #3e7093;
-          margin-top: 15px;
-        }
+
       }
       .content-right {
         margin-top: 8px;
@@ -370,6 +377,10 @@ export default {
           background: rgba(62, 112, 147, 1);
           border-radius: 1px;
           margin-right: 30px;
+        }
+        .content-center-tit3 {
+          color: #3e7093;
+          margin: 15px 25px 0 0;
         }
       }
     }

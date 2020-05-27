@@ -4,7 +4,7 @@
       <div slot="right" class="header_right" @click="handleToOrderOfExchange">我的兑换</div>
     </header-nav>
     <div class="shop_header">
-      <button class="convertibility btn">我能兑换</button>
+      <button class="convertibility btn" @click="duihuan">我能兑换</button>
       <div class="search">
         <input
           type="text"
@@ -23,7 +23,7 @@
           oninput="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}
           else{this.value=this.value.replace(/\D/g,'')}"
         />
-        <div class="search_btn" @click="handleSearchGoods">搜索</div>
+        <div class="search_btn" @click="handleSearchGoods()">搜索</div>
       </div>
     </div>
     <div class="goods_list">
@@ -55,6 +55,13 @@ export default {
     this.getGoodsList();
   },
   methods: {
+    async duihuan(){  //我能兑换
+      let result = await this.service.personalCenter.getGoodsList({
+        ...getUserData(),
+        type: 1,
+      })
+       this.goodsList = result.data;
+    },
     async getGoodsList() {
       let result = await this.service.personalCenter.getGoodsList({
         ...getUserData(),

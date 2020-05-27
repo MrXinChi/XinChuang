@@ -1,6 +1,7 @@
 <template>
   <div class="container_">
     <header-nav title="帮助中心详情"></header-nav>
+    
   </div>
 </template>
 

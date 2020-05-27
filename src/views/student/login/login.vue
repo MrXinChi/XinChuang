@@ -52,7 +52,6 @@
 					password: this.paswoed,
 					state: "1"
 				});
-
 				if(Deng.state != 1) {
 					toast({
 						text: Deng.msg,
@@ -60,13 +59,14 @@
 					});
 					return;
 				}
-				console.log(Deng.id)
 				/*本地储存*/
 				localStorage.setItem("user_id", Deng.data.id);
 				localStorage.setItem("token", Deng.data.token);
 				localStorage.setItem("name", Deng.data.name);
 				localStorage.setItem("mobile", Deng.data.mobile);
-				localStorage.setItem("showBottom", 1);
+				localStorage.setItem("sowing", Deng.data.sowing);
+				localStorage.setItem("showBottom",1);
+				sessionStorage.setItem("tabBarActiveIndex", 0);
 				this.$router.push("/dashboard/homestu");
 			},
 			loginBtn() {
@@ -74,7 +74,6 @@
 			},
 			glassesBtn() {
 				this.glasses = !this.glasses;
-				console.log(this.glasses);
 				if(this.glasses == true) {
 					this.glasses_img = glasses_true;
 					this.typeShop = "text";
@@ -89,7 +88,14 @@
 			setupBtn() {
 				this.$router.push("/student/setup");
 			}
-		}
+		},
+		created(){
+			let token = localStorage.getItem('token')
+			if(token!=null){
+				sessionStorage.setItem("tabBarActiveIndex", 0);
+				this.$router.push("/dashboard/homestu");
+			}
+		},
 	};
 </script>
 

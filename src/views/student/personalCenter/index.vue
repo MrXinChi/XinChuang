@@ -107,6 +107,11 @@ export default {
           title: "最近课程",
           isBorder: false
         },
+         {
+          img: require("@/assets/student/personalCenter/icon_list_5.png"),
+          title: "我的作业",
+          isBorder: false
+        },
         {
           img: require("@/assets/student/personalCenter/icon_list_6.png"),
           title: "帮助中心",
@@ -138,7 +143,7 @@ export default {
       );
       if(userInfoData.state==10003){
         this.vanPopup=true
-        this.Msg=userInfoData.msg
+        this.Msg='请先登录'
         return
       }
       this.information.userName = userInfoData.data.name
@@ -185,16 +190,16 @@ export default {
         case 7:
           this.$router.push("/latelyCurriculum");
           break;
-        // case 8:
-        //   console.log("5655")
-        //   break;
         case 8:
-          this.$router.push("/helpCenter");
+          this.$router.push("/homeworkCorrectingS");
           break;
         case 9:
-          this.$router.push("/feedbackxs");
+          this.$router.push("/helpCenter");
           break;
         case 10:
+          this.$router.push("/feedbackxs");
+          break;
+        case 11:
           this.$router.push("/securitySettingstu");
           break;
            

@@ -92,7 +92,6 @@
 			},
 
 			DetermineBtn() {
-				console.log('手机号' + this.phone, '验证码' + this.Code, '密码' + this.Password)
 				if(!(/^[1][3456789]\d{9}$/.test(this.phone))) {
 					toast({
 						text: '手机号有误',
@@ -112,8 +111,8 @@
 
 				if(!(/^(?![A-Z]+$)(?![a-z]+$)(?!\d+$)(?![\W_]+$)\S{8,12}$/.test(this.Password))) {
 					toast({
-						text: '密码格式有误',
-						time: 1000
+						text: '密码格式须以字母与数字结合',
+						time: 1500
 					})
 					return false;
 				}
@@ -123,7 +122,6 @@
 
 			glassesBtn() {
 				this.glasses = !this.glasses;
-				console.log(this.glasses)
 				if(this.glasses == true) {
 					this.glasses_img = glasses_true;
 					this.typeShop = "text";

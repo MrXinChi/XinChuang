@@ -2,7 +2,7 @@
   <div class="container_">
     <header-nav title="课程详细"></header-nav>
 
-    <div class="content" v-if="tacCulinfo.state==1">
+    <div class="content" v-if="status==1">
       <div class="item_list flex_y_center">
          <div class="item_left">
           <img :src="tacCulinfo.images" class="avatar" />
@@ -33,7 +33,7 @@
       </div>
       <div class="item_right" v-if="tacCulinfo.state==4">
         <img src="@/assets/personalCenter/u69.png" class="avatar" />
-        <span >已批改</span>
+        <span >已阅</span>
       </div>
       <div class="item_right" v-if="tacCulinfo.state==1">
         <img src="@/assets/personalCenter/u93.png" class="avatar" />
@@ -41,7 +41,7 @@
       </div>
       <div class="item_right" v-if="tacCulinfo.state==3">
         <img src="@/assets/personalCenter/u93.png" class="avatar" />
-        <span >未批改</span>
+        <span >未阅</span>
       </div>
   </div>
   <div class="detail_list"  v-if="tacCulinfo.state!=1">
@@ -215,7 +215,7 @@ export default {
       span{
         position: relative;
         top:-37px;
-        left: 30px;
+        left: 35px;
         @include word(15, #23252f, bold);
       }
     }

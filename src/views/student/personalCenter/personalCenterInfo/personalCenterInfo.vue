@@ -2,21 +2,20 @@
 <template>
 	<div class="container_">
 		<header-nav title="个人中心"></header-nav>
+		<!--修改头像-->
 		<div class="nav_list">
 			<label>
-      	<div class="avatar_item">
-        <div class="avatar_item_title">头像</div>
-        
-<div class="item_bock flex flex_x_center">
-    <label>
-	    <img :src="userInfo.avatar" />
-	    <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" />
-    </label>
-		</div>
-
-	</div>
-	</label>
-	<nav-item v-for="(item,index) in navList" :key="index" :navItem="item" :index="index" @toDetails="toDetails"></nav-item>
+				<div class="avatar_item">
+					<div class="avatar_item_title">头像</div>
+					<div class="item_bock flex flex_x_center">
+						<label>
+							<img :src="userInfo.avatar" />
+							<input type="file" accept="image/*" @change="handleFile" class="hiddenInput" />
+						</label>
+					</div>
+				</div>
+			</label>
+		<nav-item v-for="(item,index) in navList" :key="index" :navItem="item" :index="index" @toDetails="toDetails"></nav-item>
 	</div>
 	<!--修改昵称-->
 	<transition name="slide-fade">
@@ -25,7 +24,7 @@
 				<div @click="name_poshop = false" class="flex_1 fs13 fw_500">取消</div>
 				<div class="flex_2 flex flex_x_center fs15 fw_500">设置昵称</div>
 				<div class="flex_1 flex flex_x_right">
-					<van-button @click="nichengBtn" type="primary">完成</van-button>
+					<van-button @click="nichengBtn(1)" type="primary">完成</van-button>
 				</div>
 			</div>
 			<div class="name_input">
@@ -65,6 +64,40 @@
 			</div>
 		</div>
 	</transition>
+	<!--个人介绍-->
+	<transition name="slide-fade">
+		<div v-if="name_introduction" class="name_po">
+			<div class="name_po_header flex flex_y_center">
+				<div @click="name_introduction = false" class="flex_1 fs13 fw_500">取消</div>
+				<div class="flex_2 flex flex_x_center fs15 fw_500">填写个人信息</div>
+				<div class="flex_1 flex flex_x_right">
+					<van-button @click="nichengBtn(2)" type="primary">完成</van-button>
+				</div>
+			</div>
+			<div class="name_input">
+				<input v-focus maxlength="15" v-model="introduction" @input="change" class="fw_500 fs15" type="text" />
+				<!--v-focus-->
+				<img @click="cuoBtn" src="../../../../assets/student/personalCenter/cuo.png" />
+			</div>
+		</div>
+	</transition>
+	<!--乐器情况-->
+	<transition name="slide-fade">
+		<div v-if="name_musical" class="name_po">
+			<div class="name_po_header flex flex_y_center">
+				<div @click="name_musical = false" class="flex_1 fs13 fw_500">取消</div>
+				<div class="flex_2 flex flex_x_center fs15 fw_500">填写乐器学习情况</div>
+				<div class="flex_1 flex flex_x_right">
+					<van-button @click="nichengBtn(3)" type="primary">完成</van-button>
+				</div>
+			</div>
+			<div class="name_input">
+				<input v-focus maxlength="15" v-model="musical" @input="change" class="fw_500 fs15" type="text" />
+				<!--v-focus-->
+				<img @click="cuoBtn" src="../../../../assets/student/personalCenter/cuo.png" />
+			</div>
+		</div>
+	</transition>
 	</div>
 </template>
 
@@ -87,10 +120,25 @@
 						title: "更换手机号",
 						name: '',
 						isBorder: false
-					}
+					},
+					{
+						title: "个人介绍",
+						name: '',
+						isBorder: false
+					},
+					{
+						title: "乐器学习情况",
+						name: '',
+						isBorder: false
+					},
+					
 				],
 				name_poshop: false,
+				name_introduction:false,
+				name_musical:false,
 				names: '',
+				musical:"",  //乐器情况
+				introduction:"", //个人介绍
 				userInfo: {
 					avatar: ''
 				},
@@ -106,27 +154,27 @@
 			};
 		},
 		methods: {
-			async userInfoData() {
+			async userInfoData() {		//提交个人中心
 				let userInfoData = await this.service.personalCenter.getUserInfo(
 					getUserData()
 				);
-				//				console.log(userInfoData.data)
 				this.userInfo.avatar = userInfoData.data.images
-				console.log(userInfoData.data.mobile)
 				this.mobile = userInfoData.data.mobile
 				this.navList[0].name = userInfoData.data.name
 				this.names = userInfoData.data.name
+				this.navList[3].name = userInfoData.data.music
+				this.musical = userInfoData.data.music
+				this.navList[2].name = userInfoData.data.text
+				this.introduction = userInfoData.data.text
 
 				var tel = userInfoData.data.mobile;
 				this.mobileValue = tel
 				tel = "" + tel;
 				var tel1 = tel.substr(0, 3) + "****" + tel.substr(7)
-				console.log(tel1);
-
 				this.navList[1].name = tel1
 			},
 
-			async getYzm() {
+			async getYzm() {   //验证码
 				let Edit = await this.service.login.getYzm({
 					mobile: this.mobile
 				})
@@ -144,10 +192,9 @@
 				}, 1000)
 
 				console.log(Edit.state)
-			},
+			},			
 			
-			
-			async setUpmobile(yzm,mobile) {
+			async setUpmobile(yzm,mobile) {  //修改手机
 				let Upmobile = await this.service.personalCenter.setUpmobile({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
@@ -168,28 +215,24 @@
 				}
 			},
 			
-			async getUserEdit(file) {
-				console.log(file)
+			async getUserEdit(file) { //修改头像
 				let UserEdit = await this.service.personalCenter.getUserEdit({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
 					file: file
 				})
-				console.log(UserEdit)
 			},
-			async getUserEdittit(title) {
+			async getUserEdittit(title,music,text) {  //修改昵称
 				let UserEdit = await this.service.personalCenter.getUserEdit({
 					user_id: localStorage.getItem('user_id'),
 					token: localStorage.getItem('token'),
-					title: title
+					title: title,
+					text:text,
+					music:music
 				})
-				console.log('修改名字', UserEdit.data)
 			},
-
-			async getImgsubm(params) {
+			async getImgsubm(params) {  //修改头像
 				let Imgsubm = await this.service.about.getImgsubm(params)
-				//				console.log('图片上传', Imgsubm.data)
-
 				this.Imgsubm = Imgsubm.tup
 				this.getUserEdit(this.Imgsubm)
 			},
@@ -197,28 +240,60 @@
 				switch(inx) {
 					case 0:
 						this.name_poshop = true
-
 						break;
 					case 1:
 						this.mobileShow = true
+						break;
+					case 2:
+						this.name_introduction = true
+						break;
+					case 3:
+						this.name_musical = true
 						break;
 				}
 			},
 			cuoBtn() {
 				this.names = ''
 			},
-			nichengBtn() {
-				if(this.names.length <= 0) {
-					toast({
-						text: '密码不能为空',
-						time: 1000
-					})
-					console.log('1')
-				} else {
-					this.name_poshop = false
-					this.navList[0].name = this.names
+			nichengBtn(index) {  //完成
+				switch(index){
+					case 1:
+						if(this.names.length <= 0) {   //昵称
+							toast({
+								text: '内容不能为空',
+								time: 1000
+							})
+						} else {
+							this.name_poshop = false
+							this.navList[0].name = this.names
+						}
+						this.getUserEdittit(this.names,this.musical,this.introduction)
+						break;
+					case 3:
+						if(this.musical.length <= 0) {		//乐器
+							toast({
+								text: '内容不能为空',
+								time: 1000
+							})
+						} else {
+							this.name_musical = false
+							this.navList[3].name = this.musical
+						}
+						this.getUserEdittit(this.names,this.musical,this.introduction)
+						break;
+					case 2:
+						if(this.introduction.length <= 0) {		//个人情况
+							toast({
+								text: '内容不能为空',
+								time: 1000
+							})
+						} else {
+							this.name_introduction  = false
+							this.navList[2].name = this.introduction
+						}
+						this.getUserEdittit(this.names,this.musical,this.introduction)
+						break;
 				}
-				this.getUserEdittit(this.navList[0].name)
 			},
 			change() {
 
@@ -242,14 +317,12 @@
 					this.userInfo.avatar = res.result
 				}
 				reader.readAsDataURL(file)
-
 			},
 			mobilereturnBtn() {
 				this.mobileShow = false
 			},
 			yzmBtn() {
 				this.getYzm()
-					
 			},
 			xiugaiBtn(){
 				if(!this.yanzhengma) {
@@ -291,12 +364,10 @@
 			}
 		},
 		created() {
-			console.log(this.navList[0].name)
-			this.names = this.navList[0].name
+			this.navList[0].name = this.names
+			this.navList[2].name = this.introduction
+			this.navList[3].name = this.musical
 			this.userInfoData()
-
-			//			console.log(localStorage.getItem('user_id'))
-
 		}
 	};
 

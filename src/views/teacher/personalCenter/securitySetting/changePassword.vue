@@ -4,8 +4,12 @@
 		<div class="reg-input">
 			<div class="input-item flex flex_y_center">
 				<img class="input-icon" src="@/assets/login/anquan.png" />
-				<input v-model="code" placeholder="请输入验证码" class="fs14" type="text" />
+				<input v-model="phone" placeholder="请输入手机号" class="fs14" type="text" />
 				<button @click="yzmBtn" :disabled="disabled">{{yzm}}</button>
+			</div>
+			<div class="input-item flex flex_y_center">
+				<img class="input-icon" src="@/assets/login/mima.png" />
+				<input v-model="code" placeholder="请输入验证码" class="fs14" :type="typeShop" />
 			</div>
 			<div class="input-item flex flex_y_center">
 				<img class="input-icon" src="@/assets/login/mima.png" />
@@ -49,16 +53,21 @@
 			}
 		},
 		methods: {
-			
-			
 			//验证码
 			async getYzm() {
+				
 				let Yzm = await this.service.login.getYzm({
-					mobile: localStorage.getItem('mobile')
+					mobile:this.phone
 				})
-				console.log(Yzm)
 			},
 			yzmBtn() {
+				if(this.phone == 	""){
+					toast({
+						text: '手机号不能为空',
+						time: 1000
+					})
+					return
+				}
 				let time = 60;
 				let timer = setInterval(() => {
 					if(time == 0) {
@@ -75,7 +84,7 @@
 			},
 			
 			
-			//验证码
+			//发起修改
 			async getModify() {
 				let Modify = await this.service.login.getModify({
 					user_id:localStorage.getItem('user_id'),
@@ -83,13 +92,20 @@
 					pass:this.pasword,
 					yzm:this.code
 				})
-				console.log(Modify.msg)
 				toast({
-						text: Modify.msg,
-						time: 1000
-					})
+					text: Modify.msg,
+					time: 1000
+				})
+				if(Modify.state==200){
+					this.$router.push('/dashboard/personalCenterstu')
+					sessionStorage.getItem('tabBarActiveIndex',3)
+				}else{
+					this.phone= ''
+					this.code= ''
+					this.pasword= ''
+					this.paswordagain=''
+				}
 			},
-			
 			
 			glassesBtn() {
 				this.glasses = !this.glasses;
@@ -113,7 +129,7 @@
 					this.typeagainShop = "password";
 				}
 			},
-			DetermineBtn(){
+			DetermineBtn(){  //确认修改
 				
 				if(!this.code) {
 					toast({
@@ -122,9 +138,6 @@
 					})
 					return false;
 				}
-				
-				
-				
 				if(this.pasword == '') {
 					toast({
 						text: '请输入密码',
@@ -148,9 +161,6 @@
 					})
 					return false;
 				}
-				
-				
-				
 				this.getModify()
 			}
 		}
